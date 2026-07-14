@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qurban API Test Suite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+        .test-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 0;
+        }
+        .test-body {
+            padding: 20px;
+        }
+        .endpoint-group {
+            margin-bottom: 30px;
+        }
+        .group-title {
+            background-color: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0 15px 0;
+            font-weight: 600;
+            color: #1976d2;
+        }
+        .test-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            background: #fafafa;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+        .test-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .test-name {
+            font-weight: 500;
+            flex: 1;
+        }
+        .test-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-passed {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .test-output {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #333;
+        }
+        .btn-test {
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .results-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .summary-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+        }
+        .summary-label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-card">
+            <div class="test-header">
+                <h1>🧪 Qurban API Test Suite</h1>
+                <p class="mb-0">Comprehensive testing for all 24 API endpoints</p>
+            </div>
+            <div class="test-body">
+                <div class="mb-4">
+                    <button id="runAllTests" class="btn btn-success btn-test">
+                        <span id="runBtnText">▶ Run All Tests</span>
+                        <span id="runBtnLoading" class="loading d-none"></span>
+                    </button>
+                    <button id="clearResults" class="btn btn-secondary btn-test ms-2">Clear Results</button>
+                </div>
+
+                <div class="results-summary d-none" id="resultsSummary">
+                    <div class="summary-card">
+                        <div class="summary-value" id="passedCount">0</div>
+                        <div class="summary-label">Passed</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value" id="failedCount">0</div>
+                        <div class="summary-label">Failed</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value" id="successRate">0%</div>
+                        <div class="summary-label">Success Rate</div>
+                    </div>
+                </div>
+
+                <!-- UTILITY ENDPOINTS -->
+                <div class="endpoint-group">
+                    <div class="group-title">📋 Utility Endpoints</div>
+                    <div class="test-item">
+                        <span class="test-name">getTahun - Get available years</span>
+                        <span class="test-status status-pending" data-test="getTahun">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">getRTList - Get RT list</span>
+                        <span class="test-status status-pending" data-test="getRTList">Pending</span>
+                    </div>
+                </div>
+
+                <!-- HEWAN ENDPOINTS -->
+                <div class="endpoint-group">
+                    <div class="group-title">🐄 Hewan (Livestock) Endpoints</div>
+                    <div class="test-item">
+                        <span class="test-name">getHewan - List livestock</span>
+                        <span class="test-status status-pending" data-test="getHewan">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">addHewan - Add livestock</span>
+                        <span class="test-status status-pending" data-test="addHewan">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">updateHewan - Update livestock</span>
+                        <span class="test-status status-pending" data-test="updateHewan">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">deleteHewan - Delete livestock</span>
+                        <span class="test-status status-pending" data-test="deleteHewan">Pending</span>
+                    </div>
+                </div>
+
+                <!-- PENERIMA ENDPOINTS -->
+                <div class="endpoint-group">
+                    <div class="group-title">👨‍👩‍👧‍👦 Penerima (Beneficiary) Endpoints</div>
+                    <div class="test-item">
+                        <span class="test-name">getPenerima - List beneficiaries</span>
+                        <span class="test-status status-pending" data-test="getPenerima">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">addPenerima - Add beneficiary</span>
+                        <span class="test-status status-pending" data-test="addPenerima">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">updatePenerima - Update beneficiary</span>
+                        <span class="test-status status-pending" data-test="updatePenerima">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">updateStatusPenerima - Update status</span>
+                        <span class="test-status status-pending" data-test="updateStatusPenerima">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">deletePenerima - Delete beneficiary</span>
+                        <span class="test-status status-pending" data-test="deletePenerima">Pending</span>
+                    </div>
+                </div>
+
+                <!-- KEUANGAN ENDPOINTS -->
+                <div class="endpoint-group">
+                    <div class="group-title">💰 Keuangan (Financial) Endpoints</div>
+                    <div class="test-item">
+                        <span class="test-name">getKeuangan - List financial records</span>
+                        <span class="test-status status-pending" data-test="getKeuangan">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">addKeuangan - Add financial record</span>
+                        <span class="test-status status-pending" data-test="addKeuangan">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">updateKeuangan - Update financial record</span>
+                        <span class="test-status status-pending" data-test="updateKeuangan">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">deleteKeuangan - Delete financial record</span>
+                        <span class="test-status status-pending" data-test="deleteKeuangan">Pending</span>
+                    </div>
+                </div>
+
+                <!-- PANITIA ENDPOINTS -->
+                <div class="endpoint-group">
+                    <div class="group-title">👔 Panitia (Committee) Endpoints</div>
+                    <div class="test-item">
+                        <span class="test-name">getPanitia - List committee members</span>
+                        <span class="test-status status-pending" data-test="getPanitia">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">addPanitia - Add committee member</span>
+                        <span class="test-status status-pending" data-test="addPanitia">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">updatePanitia - Update committee member</span>
+                        <span class="test-status status-pending" data-test="updatePanitia">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">deletePanitia - Delete committee member</span>
+                        <span class="test-status status-pending" data-test="deletePanitia">Pending</span>
+                    </div>
+                </div>
+
+                <!-- DISTRIBUSI ENDPOINTS -->
+                <div class="endpoint-group">
+                    <div class="group-title">📦 Distribusi (Distribution) Endpoints</div>
+                    <div class="test-item">
+                        <span class="test-name">getDistribusi - List distributions</span>
+                        <span class="test-status status-pending" data-test="getDistribusi">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">saveDistribusi - Save distribution</span>
+                        <span class="test-status status-pending" data-test="saveDistribusi">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">deleteDistribusi - Delete distribution</span>
+                        <span class="test-status status-pending" data-test="deleteDistribusi">Pending</span>
+                    </div>
+                </div>
+
+                <!-- DASHBOARD ENDPOINTS -->
+                <div class="endpoint-group">
+                    <div class="group-title">📊 Dashboard & Aggregation</div>
+                    <div class="test-item">
+                        <span class="test-name">getDashboard - Get dashboard data</span>
+                        <span class="test-status status-pending" data-test="getDashboard">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">getPerhitungan - Get calculations</span>
+                        <span class="test-status status-pending" data-test="getPerhitungan">Pending</span>
+                    </div>
+                </div>
+
+                <div class="test-output d-none" id="testOutput">
+                    <div id="outputContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = '../api/index.php';
+        const TEST_TAHUN = '1447 H / 2026 M';
+        let testResults = {};
+        let createdIds = {};
+
+        document.getElementById('runAllTests').addEventListener('click', runAllTests);
+        document.getElementById('clearResults').addEventListener('click', clearResults);
+
+        async function runAllTests() {
+            const btn = document.getElementById('runAllTests');
+            const btnText = document.getElementById('runBtnText');
+            const btnLoading = document.getElementById('runBtnLoading');
+            
+            btn.disabled = true;
+            btnText.classList.add('d-none');
+            btnLoading.classList.remove('d-none');
+
+            testResults = {};
+            createdIds = {};
+
+            // Run tests in sequence
+            await testUtilityEndpoints();
+            await testHewanEndpoints();
+            await testPenerimaEndpoints();
+            await testKeuanganEndpoints();
+            await testPanitiaEndpoints();
+            await testDistribusiEndpoints();
+            await testDashboardEndpoints();
+
+            // Show results
+            displayResults();
+
+            btn.disabled = false;
+            btnText.classList.remove('d-none');
+            btnLoading.classList.add('d-none');
+        }
+
+        async function callApi(action, method = 'GET', data = null) {
+            try {
+                const url = `${API_BASE}?action=${encodeURIComponent(action)}`;
+                const options = {
+                    method,
+                    headers: { 'Content-Type': 'application/json' }
+                };
+
+                if (method !== 'GET' && data) {
+                    options.body = JSON.stringify(data);
+                }
+
+                const response = await fetch(url, options);
+                const result = await response.json();
+                
+                return {
+                    success: result.success,
+                    data: result.data,
+                    status: response.status,
+                    message: result.message
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.message,
+                    status: 0
+                };
+            }
+        }
+
+        function updateStatus(action, success) {
+            const statusEl = document.querySelector(`[data-test="${action}"]`);
+            if (statusEl) {
+                statusEl.className = success ? 'test-status status-passed' : 'test-status status-failed';
+                statusEl.textContent = success ? '✅ Passed' : '❌ Failed';
+            }
+            testResults[action] = success;
+        }
+
+        async function testUtilityEndpoints() {
+            // getTahun
+            let result = await callApi('getTahun');
+            updateStatus('getTahun', result.success);
+
+            // getRTList
+            result = await callApi('getRTList', 'GET', { tahun: TEST_TAHUN });
+            updateStatus('getRTList', result.success);
+        }
+
+        async function testHewanEndpoints() {
+            const data = {
+                tahun: TEST_TAHUN,
+                jenis: 'Sapi',
+                pemilik: 'Budi Santoso, Ahmad Wijaya',
+                rt: '01',
+                kotor: 400,
+                daging: 320,
+                permintaan: 'Test',
+                keterangan: 'Test hewan'
+            };
+
+            // Add
+            let result = await callApi('addHewan', 'POST', data);
+            updateStatus('addHewan', result.success);
+            if (result.success && result.data?.id) {
+                createdIds.hewan = result.data.id;
+            }
+
+            // Get
+            result = await callApi('getHewan', 'GET', { tahun: TEST_TAHUN, page: 1, limit: 50 });
+            updateStatus('getHewan', result.success);
+
+            // Update
+            if (createdIds.hewan) {
+                data.id = createdIds.hewan;
+                result = await callApi('updateHewan', 'POST', data);
+                updateStatus('updateHewan', result.success);
+            }
+
+            // Delete
+            if (createdIds.hewan) {
+                result = await callApi('deleteHewan', 'POST', { id: createdIds.hewan });
+                updateStatus('deleteHewan', result.success);
+            }
+        }
+
+        async function testPenerimaEndpoints() {
+            const data = {
+                tahun: TEST_TAHUN,
+                nama: 'Test Penerima',
+                kategori: 'Anak Yatim',
+                rt: '01',
+                status: 'Belum Diambil',
+                permintaan: 'Test'
+            };
+
+            // Add
+            let result = await callApi('addPenerima', 'POST', data);
+            updateStatus('addPenerima', result.success);
+            if (result.success && result.data?.id) {
+                createdIds.penerima = result.data.id;
+            }
+
+            // Get
+            result = await callApi('getPenerima', 'GET', { tahun: TEST_TAHUN, page: 1, limit: 50 });
+            updateStatus('getPenerima', result.success);
+
+            // Update
+            if (createdIds.penerima) {
+                data.id = createdIds.penerima;
+                result = await callApi('updatePenerima', 'POST', data);
+                updateStatus('updatePenerima', result.success);
+            }
+
+            // Update Status
+            if (createdIds.penerima) {
+                result = await callApi('updateStatusPenerima', 'POST', { id: createdIds.penerima, status: 'Sudah Diambil' });
+                updateStatus('updateStatusPenerima', result.success);
+            }
+
+            // Delete
+            if (createdIds.penerima) {
+                result = await callApi('deletePenerima', 'POST', { id: createdIds.penerima });
+                updateStatus('deletePenerima', result.success);
+            }
+        }
+
+        async function testKeuanganEndpoints() {
+            const data = {
+                tahun: TEST_TAHUN,
+                tanggal: new Date().toISOString().split('T')[0],
+                jenis: 'Pemasukan',
+                ekor: 1,
+                harga: 5000000,
+                nominal: 5000000,
+                keterangan: 'Test'
+            };
+
+            // Add
+            let result = await callApi('addKeuangan', 'POST', data);
+            updateStatus('addKeuangan', result.success);
+            if (result.success && result.data?.id) {
+                createdIds.keuangan = result.data.id;
+            }
+
+            // Get
+            result = await callApi('getKeuangan', 'GET', { tahun: TEST_TAHUN, page: 1, limit: 50 });
+            updateStatus('getKeuangan', result.success);
+
+            // Update
+            if (createdIds.keuangan) {
+                data.id = createdIds.keuangan;
+                result = await callApi('updateKeuangan', 'POST', data);
+                updateStatus('updateKeuangan', result.success);
+            }
+
+            // Delete
+            if (createdIds.keuangan) {
+                result = await callApi('deleteKeuangan', 'POST', { id: createdIds.keuangan });
+                updateStatus('deleteKeuangan', result.success);
+            }
+        }
+
+        async function testPanitiaEndpoints() {
+            const data = {
+                tahun: TEST_TAHUN,
+                nama: 'Test Panitia',
+                peran: 'Ketua',
+                kontak: '08123456789'
+            };
+
+            // Add
+            let result = await callApi('addPanitia', 'POST', data);
+            updateStatus('addPanitia', result.success);
+            if (result.success && result.data?.id) {
+                createdIds.panitia = result.data.id;
+            }
+
+            // Get
+            result = await callApi('getPanitia', 'GET', { tahun: TEST_TAHUN, page: 1, limit: 50 });
+            updateStatus('getPanitia', result.success);
+
+            // Update
+            if (createdIds.panitia) {
+                data.id = createdIds.panitia;
+                result = await callApi('updatePanitia', 'POST', data);
+                updateStatus('updatePanitia', result.success);
+            }
+
+            // Delete
+            if (createdIds.panitia) {
+                result = await callApi('deletePanitia', 'POST', { id: createdIds.panitia });
+                updateStatus('deletePanitia', result.success);
+            }
+        }
+
+        async function testDistribusiEndpoints() {
+            const data = {
+                tahun: TEST_TAHUN,
+                kategori: 'Sahibul Qurban',
+                sumber: 'Sapi',
+                label: 'Test',
+                rt: '01',
+                berat_per_bungkus: 5,
+                jumlah_bungkus: 10,
+                total_berat: 50
+            };
+
+            // Add
+            let result = await callApi('saveDistribusi', 'POST', data);
+            updateStatus('saveDistribusi', result.success);
+            if (result.success && result.data?.id) {
+                createdIds.distribusi = result.data.id;
+            }
+
+            // Get
+            result = await callApi('getDistribusi', 'GET', { tahun: TEST_TAHUN, page: 1, limit: 50 });
+            updateStatus('getDistribusi', result.success);
+
+            // Delete
+            if (createdIds.distribusi) {
+                result = await callApi('deleteDistribusi', 'POST', { id: createdIds.distribusi });
+                updateStatus('deleteDistribusi', result.success);
+            }
+        }
+
+        async function testDashboardEndpoints() {
+            // getDashboard
+            let result = await callApi('getDashboard', 'GET', { tahun: TEST_TAHUN });
+            updateStatus('getDashboard', result.success);
+
+            // getPerhitungan
+            result = await callApi('getPerhitungan', 'GET', { tahun: TEST_TAHUN });
+            updateStatus('getPerhitungan', result.success);
+        }
+
+        function displayResults() {
+            const passed = Object.values(testResults).filter(r => r).length;
+            const failed = Object.values(testResults).filter(r => !r).length;
+            const total = passed + failed;
+            const rate = total > 0 ? Math.round((passed / total) * 100) : 0;
+
+            document.getElementById('passedCount').textContent = passed;
+            document.getElementById('failedCount').textContent = failed;
+            document.getElementById('successRate').textContent = rate + '%';
+            document.getElementById('resultsSummary').style.display = 'grid';
+        }
+
+        function clearResults() {
+            document.querySelectorAll('.test-status').forEach(el => {
+                el.className = 'test-status status-pending';
+                el.textContent = 'Pending';
+            });
+            document.getElementById('resultsSummary').style.display = 'none';
+            testResults = {};
+        }
+    </script>
+</body>
+</html>

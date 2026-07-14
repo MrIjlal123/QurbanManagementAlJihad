@@ -1,0 +1,1273 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Qurban Al Jihad & Laporan Keuangan</title>
+    <link rel="icon" type="image/png" href="assets/images/faviconnew.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style type="text/tailwindcss">
+        @layer components {
+            .qurban-surface { @apply bg-white rounded-2xl p-6 shadow-sm border border-slate-100/50; }
+            .card, .page-card, .card-soft, .section-card { @apply bg-white rounded-2xl border border-slate-100/50 shadow-sm; }
+            .module-header, .page-title-bar { @apply flex flex-col gap-3 border-b border-slate-100 pb-4 mb-5 lg:flex-row lg:items-center lg:justify-between; }
+            .module-title { @apply text-lg font-bold text-slate-950; }
+            .module-subtitle, .text-muted { @apply text-sm text-slate-400; }
+            .section-title { @apply text-xs font-bold uppercase text-slate-400; }
+            .form-control, .form-select { @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm shadow-sm outline-none transition focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500; }
+            .form-control-sm, .form-select-sm { @apply px-4 py-2.5 text-sm; }
+            .form-label { @apply mb-1 text-xs font-bold uppercase text-slate-500; }
+            .form-floating-custom { @apply static mb-4; }
+            .form-floating-custom label { @apply static mb-1 block translate-x-0 translate-y-0 text-xs font-bold uppercase text-slate-500; }
+            .form-floating-custom input, .form-floating-custom select, .form-floating-custom textarea { @apply pt-2.5; }
+            .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl border border-transparent px-5 py-2.5 text-sm font-medium shadow-sm transition-all; }
+            .btn-success, .btn-primary { @apply bg-emerald-600 text-white hover:bg-emerald-700; }
+            .btn-secondary { @apply bg-slate-900 text-white hover:bg-slate-800; }
+            .btn-warning { @apply bg-amber-500 text-white hover:bg-amber-600; }
+            .btn-danger { @apply bg-rose-600 text-white hover:bg-rose-700; }
+            .btn-outline-success { @apply border-emerald-200 bg-white text-emerald-700 hover:bg-emerald-50; }
+            .btn-outline-danger { @apply border-rose-200 bg-white text-rose-700 hover:bg-rose-50; }
+            .btn-outline-secondary { @apply border-slate-200 bg-white text-slate-600 hover:bg-slate-50; }
+            .btn-link { @apply border-0 bg-transparent px-2 py-1 shadow-none; }
+            .table-responsive { @apply overflow-x-auto rounded-2xl border border-slate-100 bg-white shadow-sm; }
+            .table { @apply mb-0 w-full border-none text-left text-sm text-slate-600; }
+            .table th { @apply border-0 bg-slate-50/50 px-4 py-3 text-xs font-bold uppercase text-slate-400; }
+            .table td { @apply border-0 px-4 py-3 align-middle; }
+            .table tbody { @apply divide-y divide-slate-100; }
+            .badge { @apply rounded-full px-3 py-1 text-xs font-medium; }
+            .bg-success { @apply bg-emerald-50 text-emerald-700; }
+            .bg-warning { @apply bg-amber-50 text-amber-700; }
+            .bg-secondary, .bg-dark { @apply bg-slate-100 text-slate-700; }
+            .bg-primary { @apply bg-sky-50 text-sky-700; }
+            .pagination { @apply flex justify-end gap-2; }
+            .page-link { @apply rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:bg-slate-50; }
+            .page-item.active .page-link { @apply border-emerald-600 bg-emerald-600 text-white; }
+            .page-item.disabled .page-link { @apply cursor-not-allowed opacity-50; }
+        }
+        [role="tab"].active { background: rgb(236 253 245); color: rgb(4 120 87); }
+        #dashboardChartWrapper { height: 320px; }
+        .form-floating-custom,
+        .mb-3 {
+            position: static !important;
+        }
+        .form-floating-custom label,
+        .mb-3 > label,
+        .form-label {
+            position: static !important;
+            display: block !important;
+            transform: none !important;
+            margin-bottom: 0.45rem !important;
+            color: #64748b !important;
+            font-size: 0.75rem !important;
+            font-weight: 700 !important;
+            line-height: 1.1rem !important;
+            letter-spacing: 0 !important;
+            text-transform: uppercase !important;
+            pointer-events: auto !important;
+        }
+        .form-floating-custom input,
+        .form-floating-custom select,
+        .form-floating-custom textarea,
+        .form-control,
+        .form-select {
+            min-height: 44px !important;
+            padding: 0.625rem 1rem !important;
+            border-radius: 0.875rem !important;
+            border: 1px solid #e2e8f0 !important;
+            background: #fff !important;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+            font-size: 0.875rem !important;
+            color: #334155 !important;
+        }
+        .btn {
+            min-height: 42px !important;
+            border-radius: 0.875rem !important;
+            padding: 0.625rem 1rem !important;
+            line-height: 1.1rem !important;
+            white-space: normal !important;
+            transform: none !important;
+        }
+        .btn:hover,
+        .btn:focus {
+            transform: none !important;
+        }
+        .btn.w-100,
+        .w-100.btn {
+            width: 100% !important;
+        }
+        /* Custom button styling untuk export */
+        .btn-export-excel {
+            border: 2px solid #10b981 !important;
+            color: #10b981 !important;
+            background-color: #f0fdf4 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15) !important;
+            font-weight: 600 !important;
+        }
+        .btn-export-excel:hover {
+            background-color: #10b981 !important;
+            color: white !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3) !important;
+        }
+        .btn-export-pdf {
+            border: 2px solid #ef4444 !important;
+            color: #ef4444 !important;
+            background-color: #fef2f2 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15) !important;
+            font-weight: 600 !important;
+        }
+        .btn-export-pdf:hover {
+            background-color: #ef4444 !important;
+            color: white !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3) !important;
+        }
+        .btn-laporan {
+            background-color: #059669 !important;
+            color: white !important;
+            border: none !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25) !important;
+            font-weight: 600 !important;
+        }
+        .btn-laporan:hover {
+            background-color: #047857 !important;
+            color: white !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35) !important;
+        }
+        /* Rounded button styling */
+        .btn-rounded {
+            border-radius: 50px !important;
+            padding: 0.625rem 1.25rem !important;
+            min-height: 44px !important;
+            font-weight: 600 !important;
+            border: 2px solid transparent !important;
+            transition: all 0.3s ease !important;
+            white-space: normal !important;
+            font-size: 0.95rem !important;
+        }
+        .btn-rounded-search {
+            border-radius: 50px !important;
+            padding: 0.625rem 1.5rem !important;
+            min-height: 44px !important;
+            font-weight: 600 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.5rem !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+        }
+        .btn-rounded-search:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        }
+    </style>
+    <style>
+        /* Monitoring cards: small icon on top-left */
+        .monitor-card { position: relative; display:flex; flex-direction:column; gap:0.5rem; }
+        .monitor-card-icon { width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center; border-radius:0.75rem; background:#f0fdf4; color:#059669; font-size:1.125rem; }
+        .monitor-card-icon i { width:22px; height:22px; }
+        /* per-type colors */
+        .monitor-card-icon.monitor-icon-hewan { background:#f0fdf4; color:#059669; }
+        .monitor-card-icon.monitor-icon-penerima { background:#eff6ff; color:#0ea5e9; }
+        .monitor-card-icon.monitor-icon-diambil { background:#ecfdf5; color:#059669; }
+        .monitor-card-icon.monitor-icon-belum { background:#fff7ed; color:#d97706; }
+        .monitor-card-icon.monitor-icon-sapi { background:#ecfeff; color:#0d9488; }
+        .monitor-card-icon.monitor-icon-kambing { background:#f5f3ff; color:#7c3aed; }
+        @media (min-width: 992px) {
+            .monitor-card { align-items:flex-start; }
+        }
+        .form-floating-custom,
+        .mb-3 {
+            position: static !important;
+        }
+        .form-floating-custom label,
+        .mb-3 > label,
+        .form-label {
+            position: static !important;
+            display: block !important;
+            transform: none !important;
+            margin-bottom: 0.45rem !important;
+            color: #64748b !important;
+            font-size: 0.75rem !important;
+            font-weight: 700 !important;
+            line-height: 1.1rem !important;
+            letter-spacing: 0 !important;
+            text-transform: uppercase !important;
+            pointer-events: auto !important;
+        }
+        .form-floating-custom input,
+        .form-floating-custom select,
+        .form-floating-custom textarea,
+        .form-control,
+        .form-select {
+            min-height: 44px !important;
+            padding: 0.625rem 1rem !important;
+            border-radius: 0.875rem !important;
+            border: 1px solid #e2e8f0 !important;
+            background: #fff !important;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+            font-size: 0.875rem !important;
+            color: #334155 !important;
+        }
+        .btn {
+            min-height: 42px !important;
+            border-radius: 0.875rem !important;
+            padding: 0.625rem 1rem !important;
+            line-height: 1.1rem !important;
+            white-space: normal !important;
+            transform: none !important;
+        }
+        .btn:hover,
+        .btn:focus {
+            transform: none !important;
+        }
+        .btn.w-100,
+        .w-100.btn {
+            width: 100% !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-[Inter] text-slate-700">
+    <div id="loadingOverlay" aria-hidden="true">
+        <div class="loading-overlay-card" role="status" aria-live="polite">
+            <div class="loading-overlay-spinner"></div>
+            <div>
+                <div class="loading-overlay-title">Memuat dashboard</div>
+                <div class="loading-overlay-text">Sedang mengambil data terbaru...</div>
+            </div>
+        </div>
+    </div>
+
+<div class="min-h-screen bg-slate-50 lg:flex">
+    <aside class="no-print w-64 bg-white border-r border-slate-100 h-screen sticky top-0 hidden lg:flex flex-col px-6 py-7">
+        <div class="flex items-center gap-3 px-2 py-4 border-b border-slate-100/70 mb-6">
+            <a href="#" onclick="document.getElementById('tab-dashboard').click(); return false;" class="flex items-center gap-3 w-full">
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-50 border border-slate-100/30 shadow-xs overflow-hidden">
+                    <!-- Direct image sourcing for the new asset file -->
+                    <img src="assets/images/nav-header.png" alt="Management Qurban Logo" class="h-9 w-9 object-contain transform scale-105">
+                </div>
+                <div class="flex flex-col min-w-0">
+                    <h1 class="font-black text-slate-800 text-sm tracking-tight leading-tight uppercase flex items-center gap-0.5">
+                        Qurban<span class="text-emerald-600 font-medium lowercase">Manager</span>
+                    </h1>
+                    <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">Masjid Al Jihad</span>
+                    <span class="text-[9px] font-medium text-emerald-600/80 tracking-widest uppercase mt-px">Ops Center</span>
+                </div>
+            </a>
+        </div>
+        <nav class="flex flex-1 flex-col gap-1" role="tablist" aria-label="Sidebar navigasi">
+            <button class="active group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-slate-600 transition hover:translate-x-1 hover:bg-emerald-50 hover:text-emerald-700" id="tab-dashboard" data-bs-toggle="tab" data-bs-target="#pane-dashboard" type="button" role="tab" aria-controls="pane-dashboard" aria-selected="true"><i data-lucide="layout-dashboard" class="h-4 w-4"></i>Dashboard</button>
+            <button class="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-slate-600 transition hover:translate-x-1 hover:bg-emerald-50 hover:text-emerald-700" id="tab-perhitungan" data-bs-toggle="tab" data-bs-target="#pane-perhitungan" type="button" role="tab" aria-controls="pane-perhitungan" aria-selected="false"><i data-lucide="calculator" class="h-4 w-4"></i>Perhitungan</button>
+            <button class="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-slate-600 transition hover:translate-x-1 hover:bg-emerald-50 hover:text-emerald-700" id="tab-hewan" data-bs-toggle="tab" data-bs-target="#pane-hewan" type="button" role="tab" aria-controls="pane-hewan" aria-selected="false"><i data-lucide="package" class="h-4 w-4"></i>Hewan Qurban</button>
+            <button class="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-slate-600 transition hover:translate-x-1 hover:bg-emerald-50 hover:text-emerald-700" id="tab-penerima" data-bs-toggle="tab" data-bs-target="#pane-penerima" type="button" role="tab" aria-controls="pane-penerima" aria-selected="false"><i data-lucide="users" class="h-4 w-4"></i>Penerima Qurban</button>
+            <button class="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-slate-600 transition hover:translate-x-1 hover:bg-emerald-50 hover:text-emerald-700" id="tab-panitia" data-bs-toggle="tab" data-bs-target="#pane-panitia" type="button" role="tab" aria-controls="pane-panitia" aria-selected="false"><i data-lucide="briefcase" class="h-4 w-4"></i>Panitia Qurban</button>
+            <button class="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-slate-600 transition hover:translate-x-1 hover:bg-emerald-50 hover:text-emerald-700" id="tab-keuangan" data-bs-toggle="tab" data-bs-target="#pane-keuangan" type="button" role="tab" aria-controls="pane-keuangan" aria-selected="false"><i data-lucide="wallet-cards" class="h-4 w-4"></i>Laporan Keuangan</button>
+        </nav>
+        <div id="sidebar-activity-box" class="mx-3 my-4 flex flex-col gap-2 rounded-2xl border border-slate-100/80 bg-slate-50 p-3.5 transition-all">
+            <div class="mb-1 flex items-center gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+                </span>
+                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">3 Aktivitas Terakhir</span>
+            </div>
+            <div id="activity-log-list" class="flex flex-col gap-2">
+                <p class="text-xs font-medium italic text-slate-400">Belum ada aktivitas</p>
+            </div>
+        </div>
+    </aside>
+    <section class="min-h-screen flex-1 bg-slate-50 p-8 text-slate-700">
+        <header class="flex flex-col gap-4 border-b border-slate-200/70 pb-6 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-[0.2em] text-emerald-600">Masjid Al Jihad</p>
+                <h2 id="appPageTitle" class="mt-2 text-2xl font-bold text-slate-950">Dashboard Ringkas Qurban</h2>
+            </div>
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <label class="relative block">
+                    <i data-lucide="search" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"></i>
+                </label>
+                <div class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-white px-4 py-2 shadow-sm">
+                    <div class="grid h-9 w-9 place-items-center rounded-full bg-emerald-600 text-sm font-bold text-white">AJ</div>
+                    <div class="leading-tight">
+                        <p class="text-sm font-semibold text-slate-900">Admin Qurban</p>
+                        <p class="text-xs text-slate-400">Masjid Al Jihad</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <section class="mt-6 grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8" id="dashboardMonitoring">
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md flex flex-col justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
+                        <i data-lucide="package" class="text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Hewan</div>
+                        <div id="statTotalHewan" class="text-2xl font-bold text-slate-800">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md flex flex-col justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-50 text-blue-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
+                        <i data-lucide="users" class="text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Penerima</div>
+                        <div id="statTotalPenerima" class="text-2xl font-bold text-slate-800">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md flex flex-col justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
+                        <i data-lucide="user-check" class="text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Sudah Diambil</div>
+                        <div id="statSudahDiambil" class="text-2xl font-bold text-emerald-600">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md flex flex-col justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-amber-50 text-amber-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
+                        <i data-lucide="clock" class="text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Belum Diambil</div>
+                        <div id="statBelumDiambil" class="text-2xl font-bold text-amber-600">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md flex flex-col justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
+                        <i data-lucide="server" class="text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Jumlah Sapi</div>
+                        <div id="statJumlahSapi" class="text-2xl font-bold text-slate-800">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md flex flex-col justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
+                        <i data-lucide="users" class="text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Jumlah Kambing</div>
+                        <div id="statJumlahKambing" class="text-2xl font-bold text-slate-800">0</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="mt-6 hidden d-none" id="wrapperMonitoringRT">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100/50">
+                <div class="mb-3 text-xs font-bold uppercase text-slate-400">Jumlah Penerima per RT (Filter Aktif)</div>
+                <div id="listStatistikRT" class="flex flex-wrap gap-2"></div>
+            </div>
+        </section>
+        <main id="main-content" class="mt-6 space-y-6">
+            <div class="tab-content" id="mainTabContent">
+                <div class="tab-pane fade show active" id="pane-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <div class="card p-4 card-soft">
+                                <div class="page-title-bar mb-4">
+                                    <div class="w-full bg-white p-5 rounded-xl border border-slate-100/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                        <div>
+                                            <h4 class="fw-bold mb-1">Dashboard Ringkas Qurban</h4>
+                                            <p class="text-muted mb-0">Ringkasan real-time untuk hewan, berat daging, dan distribusi per RT.</p>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <select id="filterTahunDashboard" class="form-select h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm shadow-sm outline-none transition" onchange="dashboardHewanCurrentPage = 1; refreshDashboard(this.value)">
+                                                <option value="SemuaTahun">Semua Tahun</option>
+                                            </select>
+                                            <button class="h-10 bg-slate-800 hover:bg-slate-900 text-white rounded-xl px-4 text-sm font-semibold transition flex items-center gap-2" onclick="refreshDashboard()"><i data-lucide="refresh-cw" class="text-base"></i> Segarkan</button>
+                                            <button class="h-10 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl px-4 text-sm font-semibold transition flex items-center gap-2" id="printLaporanTahunanBtn" onclick="window.cetakLaporanPDF_Lengkap()"><i data-lucide="printer" class="text-base"></i> Cetak Laporan Tahunan</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6 dashboard-summary-cards">
+                                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                                        <div class="flex items-start gap-3">
+                                            <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
+                                                <i data-lucide="package" class="text-xl"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Hewan Tahun Ini</div>
+                                                <div id="dashTotalHewan" class="text-xl font-bold text-slate-800 my-1">0</div>
+                                                <div class="text-xs text-slate-400 font-medium">Sapi + Kambing terdaftar</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                                        <div class="flex items-start gap-3">
+                                            <div class="bg-blue-50 text-blue-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
+                                                <i data-lucide="scale" class="text-xl"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Berat Bersih</div>
+                                                <div id="dashBeratBersih" class="text-xl font-bold text-slate-800 my-1">0 KG</div>
+                                                <div class="text-xs text-slate-400 font-medium">Estimasi berat daging bersih</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                                        <div class="flex items-start gap-3">
+                                            <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
+                                                <i data-lucide="user" class="text-xl"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Sapi</div>
+                                                <div id="dashTotalSapi" class="text-xl font-bold text-slate-800 my-1">0</div>
+                                                <div class="text-xs text-slate-400 font-medium">Jumlah ekor sapi</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                                        <div class="flex items-start gap-3">
+                                            <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
+                                                <i data-lucide="users" class="text-xl"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Kambing</div>
+                                                <div id="dashTotalKambing" class="text-xl font-bold text-slate-800 my-1">0</div>
+                                                <div class="text-xs text-slate-400 font-medium">Jumlah ekor kambing</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card p-4 card-soft">
+                                <div class="page-title-bar mb-3">
+                                    <div>
+                                        <h5 class="fw-bold mb-1">Distribusi per RT</h5>
+                                        <p class="text-muted mb-0">Visualisasi ringkas jumlah bungkus berdasarkan RT.</p>
+                                    </div>
+                                </div>
+                                <div id="dashboardChartWrapper">
+                                    <canvas id="dashboardRtChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card p-4 card-soft">
+                                <div class="page-title-bar mb-3">
+                                    <div>
+                                        <h5 class="fw-bold mb-1">Laporan Inventarisasi & Timbangan Hewan Qurban</h5>
+                                        <p class="text-muted mb-0">Tabel ringkas data hewan qurban. Gunakan navigasi untuk melihat data selanjutnya.</p>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-standard w-full text-left border-none table-hover table-sm align-middle text-center small">
+                                        <thead class="bg-slate-50/80 border-b border-slate-100 text-slate-500">
+                                            <tr>
+                                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider">No</th>
+                                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider">Tahun</th>
+                                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider">RT</th>
+                                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider">Jenis Hewan</th>
+                                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider">Nama Pemilik</th>
+                                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider">Berat Kotor</th>
+                                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider">Berat Daging</th>
+                                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider">Keterangan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="dashboardHewanTableBody"></tbody>
+                                    </table>
+                                </div>
+                                <div id="dashboardHewanPagination" class="mt-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="pane-perhitungan" role="tabpanel" aria-labelledby="tab-perhitungan">
+                    <div class="row g-4 mb-4">
+                <div class="col-12">
+                    <div class="card p-4 h-100 page-card">
+                        <div class="module-header">
+                            <div>
+                                <h4 class="module-title">Distribusi & Perhitungan</h4>
+                                <p class="module-subtitle">Ringkasan kalkulasi distribusi daging dan performa pendistribusian.</p>
+                            </div>
+                            <div class="module-actions">
+                                <button class="btn btn-sm btn-pill btn-success" onclick="refreshDashboard()"><i data-lucide="refresh-cw"></i> Segarkan Dashboard</button>
+                            </div>
+                        </div>
+                        <div class="card p-3 mb-4 bg-light border rounded section-card">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+                                <div>
+                                    <div class="border rounded-xl p-3 bg-white">
+                                        <div class="text-[11px] text-slate-400 uppercase tracking-wider mb-1.5">Total Daging Masuk</div>
+                                        <div id="summaryTotalDagingMasuk" class="font-extrabold text-lg text-slate-800">0 KG</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="border rounded-xl p-3 bg-white">
+                                        <div class="text-[11px] text-slate-400 uppercase tracking-wider mb-1.5">Total Daging Didistribusikan</div>
+                                        <div id="summaryTotalDagingDidistribusikan" class="font-extrabold text-lg text-slate-800">0 KG</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div id="summaryBalanceBox" class="border rounded-xl p-3 bg-white text-center">
+                                        <div class="text-[11px] text-slate-400 uppercase tracking-wider mb-1.5">Balance Daging</div>
+                                        <div id="summaryBalanceDaging" class="font-extrabold text-lg text-slate-800">0 KG</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="hasilPerhitungan">
+                            <table class="table w-full text-left border-none border-none">
+                                <thead>
+                                    <tr><th>Jenis</th><th>Ekor</th><th>Berat Kotor</th><th>Netto (Berat Daging)</th></tr>
+                                </thead>
+                                <tbody id="tabelRingkasan"></tbody>
+                                <tfoot>
+                                    <tr class="table-secondary fw-bold">
+                                        <td>Total</td>
+                                        <td id="totalEkorRingkasan">0</td>
+                                        <td id="totalKotorRingkasan">0</td>
+                                        <td id="totalDagingRingkasan">0</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4 mb-4">
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card p-4 h-100 page-card">
+                        <div class="module-header">
+                            <div>
+                                <h5 class="module-title">Form Pendistribusian Daging</h5>
+                                <p class="module-subtitle">Catat distribusi berdasarkan kategori penerima dengan cepat.</p>
+                            </div>
+                        </div>
+                        <form id="formDistribusi" onsubmit="handleDistribusiSubmit(event)">
+                            <div class="mb-3.5">
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Kategori Penerima</label>
+                                <select id="kategoriPenerima" name="kategoriPenerima" class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm focus:ring-1 focus:ring-emerald-500 outline-none" required onchange="updateKategoriPenerimaFields()">
+                                    <option value="Per RT">Per RT (Hitung Otomatis Jumlah Warga)</option>
+                                    <option value="Sahibul Qurban">Sahibul Qurban (Hitung Otomatis Per Pemilik)</option>
+                                    <option value="Panitia">Panitia (Hitung Otomatis Penerima Panitia)</option>
+                                    <option value="Lainnya">Lainnya (Gunakan Keterangan)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3.5">
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Tahun</label>
+                                <select id="tahunDistribusi" name="tahunDistribusi" class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm focus:ring-1 focus:ring-emerald-500 outline-none" required onchange="renderShahibulOwnerList(); populateShahibulHewanOptions();">
+                                    <option value="">Pilih Tahun</option>
+                                </select>
+                            </div>
+                            <div id="groupRTDistribusi" class="mb-3.5 d-none">
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Pilih RT</label>
+                                <select id="rtDistribusi" name="rtDistribusi" class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm focus:ring-1 focus:ring-emerald-500 outline-none" disabled>
+                                    <option value="">Pilih RT</option>
+                                </select>
+                            </div>
+                            <div id="groupShahibul" class="mb-3 d-none">
+                                <div id="custom-hewan-dropdown" class="relative w-full">
+                                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Pilih Hewan Untuk Distribusi Shahibul</label>
+                                    <div class="relative w-full">
+                                        <input type="text" id="custom-hewan-search" placeholder="Cari hewan / pemilik / berat..." class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-4 pr-10 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition-all" disabled autocomplete="off">
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                                            <i class="bi bi-chevron-down text-xs"></i>
+                                        </div>
+                                    </div>
+                                    <div id="custom-hewan-options" class="hidden absolute z-50 mt-1 w-full max-h-60 overflow-y-auto rounded-xl border border-slate-100 bg-white p-1.5 shadow-xl"></div>
+                                </div>
+                                <select id="hewanShahibul" name="hewanShahibul" class="hidden" style="display:none!important;" onchange="updateBeratShahibulField(); renderShahibulOwnerList();" disabled>
+                                    <option value="">-- Pilih Hewan --</option>
+                                </select>
+                                <div class="mb-3 p-3 bg-light rounded border">
+                                    <div class="small text-muted mb-2">Total Berat Hewan (akan dibagi otomatis):</div>
+                                    <div class="fw-bold fs-5" id="beratTotalHewan">0 KG</div>
+                                </div>
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Berat per Pemilik (KG)</label>
+                                <input type="number" id="beratPerPemilikSahibul" name="beratPerPemilikSahibul" class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm focus:ring-1 focus:ring-emerald-500 outline-none mb-3" min="0.1" step="0.1" placeholder="Masukkan berat yang diberikan ke setiap pemilik" disabled>
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Daftar Pemilik Otomatis</label>
+                                <div id="shahibulFieldsContainer" class="text-sm text-slate-500 border rounded p-3 min-h-70">
+                                    <div>Pilih hewan di atas untuk melihat daftar pemilik.</div>
+                                    <div id="shahibulAutoList" class="mt-2"></div>
+                                </div>
+                            </div>
+                            <div id="groupLainnyaKeterangan" class="mb-3.5 d-none">
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Keterangan</label>
+                                <input type="text" id="keteranganLainnya" class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm focus:ring-1 focus:ring-emerald-500 outline-none" placeholder="Contoh: Grup Surabraja, Perumnas" disabled>
+                            </div>
+                            <div class="mb-3.5">
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Sumber Daging</label>
+                                <select id="sumberDaging" name="sumberDaging" class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm focus:ring-1 focus:ring-emerald-500 outline-none" required onchange="updateOwnerFieldControls(); renderShahibulOwnerList(); populateShahibulHewanOptions();">
+                                    <option value="Sapi">Sapi</option>
+                                    <option value="Kambing">Kambing</option>
+                                    <option value="Campuran">Campuran (Sapi & Kambing)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3.5" id="groupBeratPerBungkus">
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Berat per Bungkus (KG)</label>
+                                <input type="number" id="beratPerBungkus" name="beratPerBungkus" class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm focus:ring-1 focus:ring-emerald-500 outline-none" min="0.1" step="0.1" placeholder="Masukkan berat per bungkus">
+                            </div>
+                            <div id="groupJumlah" class="mb-3 d-none">
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Jumlah</label>
+                                <input type="number" id="jumlahBungkus" name="jumlahBungkus" class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm focus:ring-1 focus:ring-emerald-500 outline-none" min="1" step="1" placeholder="Jumlah bungkus" disabled>
+                            </div>
+                            <div class="mb-3.5">
+                                <button type="submit" class="h-10 w-full rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition">Hitung Distribusi</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card p-4 h-100 page-card">
+                        <div class="w-full bg-white p-5 rounded-xl border border-slate-100/60 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800">Hasil Pendistribusian</h3>
+                                <p class="text-xs text-slate-400 mt-1">Lihat ringkasan distribusi dan total berat per kategori.</p>
+                            </div>
+                            <div class="flex items-center gap-3 self-start sm:self-center">
+                                <select id="filterTahunDistribusi" class="h-10 w-40 rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm text-slate-600 outline-none transition-all">
+                                    <option value="all">Semua Tahun</option>
+                                </select>
+                                <button type="button" id="printDistribusiBtn" class="h-10 bg-rose-50 text-rose-700 hover:bg-rose-100 font-semibold px-4 rounded-xl text-sm flex items-center gap-2 transition-all whitespace-nowrap">
+                                    <i class="bi bi-file-pdf text-base"></i>
+                                    <span>Cetak Laporan</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="w-full overflow-x-auto max-h-[420px] overflow-y-auto pr-1">
+                            <table class="table w-full text-left border-none border-none table-sm align-middle text-center">
+                                <thead class="table-secondary">
+                                    <tr>
+                                        <th>Kategori</th>
+                                        <th>Sumber Daging</th>
+                                        <th>Keterangan</th>
+                                        <th>Jumlah Sohibul</th>
+                                        <th>Berat / Bungkus (KG)</th>
+                                        <th>Jumlah</th>
+                                        <th>Total Berat (KG)</th>
+                                        <th class="no-print col-action">Hapus</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelDistribusiBody"></tbody>
+                                <tfoot>
+                                    <tr class="table-secondary fw-bold">
+                                        <td colspan="5">Total</td>
+                                        <td id="totalBungkusDistribusi">0</td>
+                                        <td id="totalBeratDistribusi">0</td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div id="paginationDistribusi" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="pane-hewan" role="tabpanel" aria-labelledby="tab-hewan">
+            <div class="row g-4 mb-4">
+                <div class="col-xl-4 col-lg-5">
+                    <div class="card p-4 h-100 page-card">
+                        <div class="module-header">
+                            <div>
+                                <h5 class="module-title">Input Data Hewan Qurban</h5>
+                                <p class="module-subtitle">Masukkan inventaris hewan dengan informasi lengkap.</p>
+                            </div>
+                        </div>
+                        <form id="formHewan">
+                            <input type="hidden" id="idHewan">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold mb-1">Tahun (Hijriah / Masehi)</label>
+                                <select id="tahunHewan" name="tahunHewan" class="form-select form-select-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" required>
+                                    <option value="">Pilih Tahun</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold mb-1">RT / Lokasi</label>
+                                <select id="rtHewan" class="form-select form-select-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition">
+                                    <option value="">Pilih RT</option>
+                                    <option value="01">RT 01</option>
+                                    <option value="02">RT 02</option>
+                                    <option value="03">RT 03</option>
+                                    <option value="04">RT 04</option>
+                                    <option value="05">RT 05</option>
+                                    <option value="06">RT 06</option>
+                                    <option value="07">RT 07</option>
+                                    <option value="08">RT 08</option>
+                                    <option value="09">RT 09</option>
+                                    <option value="10">RT 10</option>
+                                    <option value="11">RT 11</option>
+                                    <option value="12">RT 12</option>
+                                </select>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold mb-1">Jenis Hewan</label>
+                                    <select id="jenisHewan" name="jenisHewan" class="form-select form-select-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" required onchange="hitungEstimasiDaging(); adjustOwnerFieldsForJenis()">
+                                        <option value="Sapi">Sapi</option>
+                                        <option value="Kambing">Kambing</option>
+                                        <option value="Domba">Domba</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold mb-1">Permintaan</label>
+                                    <input type="text" id="permintaanHewan" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" placeholder="Freetext: Tanpa Kepala, dll">
+                                </div>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold mb-1">Berat Kotor (KG)</label>
+                                    <input type="number" id="beratKotor" name="beratKotor" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" min="1" placeholder="0" required oninput="hitungEstimasiDaging()">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold mb-1">Netto (Berat Daging)</label>
+                                    <input type="text" id="beratDaging" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition bg-light fw-bold text-success" readonly placeholder="Otomatis">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold mb-1">Nama Pemilik (Shahibul Qurban)</label>
+                                <div id="pemilikFieldsContainerHewan" class="d-flex flex-column gap-3 border rounded-3 p-3 bg-light" style="min-height: 100px;"></div>
+                                <div class="d-flex gap-2 mt-2">
+                                    <button type="button" id="addPemilikHewanBtn" class="btn btn-sm btn-outline-secondary" onclick="addHewanOwnerField()">Tambah Pemilik</button>
+                                    <small class="text-muted align-self-center">(Sapi: hingga 7 pemilik. Kambing/Domba: 1 pemilik.)</small>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold mb-1">Keterangan</label>
+                                <input type="text" id="keteranganHewan" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" placeholder="Contoh: Sapi Limosin, sehat walafiat">
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold" id="submitHewanBtn">Simpan Data Hewan</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-standard btn-block fw-bold mt-2 d-none" id="cancelEditHewan" onclick="resetFormHewan()">Batal Edit</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-xl-8 col-lg-7">
+                    <div class="card p-4 h-100 page-card">
+                        <div id="hewanHeaderContainer"></div>
+                        <div class="table-responsive">
+                            <table class="table table-standard w-full text-left border-none table-hover table-sm align-middle text-center small">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Tahun</th>
+                                        <th>RT</th>
+                                        <th>Jenis</th>
+                                        <th>Pemilik (Shahibul Qurban)</th>
+                                        <th>Permintaan</th>
+                                        <th>Berat Kotor</th>
+                                        <th>Berat Daging</th>
+                                        <th>Keterangan</th>
+                                        <th class="aksi-kolom no-print">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelHewanLayar"></tbody>
+                            </table>
+                        </div>
+                        <div id="paginationHewan" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="pane-penerima" role="tabpanel" aria-labelledby="tab-penerima">
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="card p-4 mb-4 page-card">
+                        <div class="module-header">
+                            <div>
+                                <h5 class="module-title">Input Data Penerima</h5>
+                                <p class="module-subtitle">Tambahkan penerima manfaat dengan kategori dan RT.</p>
+                            </div>
+                        </div>
+                        <form id="formPenerima">
+                            <input type="hidden" id="idPenerima">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Tahun Penyaluran</label>
+                                <select id="tahunPenerima" name="tahunPenerima" class="form-select form-select-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" required>
+                                    <option value="">Pilih Tahun</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Nama Penerima</label>
+                                <input type="text" id="nama" name="nama" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" required placeholder="Contoh: Ahmad">
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold">Kategori / Peran</label>
+                                    <select id="kategori" name="kategori" class="form-select form-select-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" required onchange="toggleRTField()">
+                                        <option value="Warga">Warga (Per RT)</option>
+                                        <option value="Panitia">Panitia</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3" id="groupRT">
+                                <label class="form-label small fw-bold">Nomor RT</label>
+                                <select id="rt" name="rt" class="form-select form-select-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" required>
+                                    <option value="">-- Pilih RT --</option>
+                                    <option value="1">RT 1</option>
+                                    <option value="2">RT 2</option>
+                                    <option value="3">RT 3</option>
+                                    <option value="4">RT 4</option>
+                                    <option value="5">RT 5</option>
+                                    <option value="6">RT 6</option>
+                                    <option value="7">RT 7</option>
+                                    <option value="8">RT 8</option>
+                                    <option value="9">RT 9</option>
+                                    <option value="10">RT 10</option>
+                                    <option value="11">RT 11</option>
+                                    <option value="12">RT 12</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success btn-standard btn-rounded-large btn-block fw-bold" id="submitPenerimaBtn"><i class="bi bi-person-plus"></i> Tambah Penerima</button>
+                            <button type="button" class="btn btn-outline-secondary btn-standard btn-block fw-bold mt-2 d-none" id="cancelEditPenerima" onclick="resetFormPenerima()">Batal Edit</button>
+                        </form>
+                    </div>
+                    <div class="card p-4 page-card">
+                        <div class="module-header">
+                            <div>
+                                <h5 class="module-title">Import via Excel</h5>
+                                <p class="module-subtitle">Unggah daftar penerima secara massal dengan format Excel.</p>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <button class="btn btn-outline-standard btn-standard btn-rounded-large" onclick="downloadTemplateExcel()"><i class="bi bi-download"></i> Download Template Excel (.xlsx)</button>
+                        </div>
+                        <div class="mb-3">
+                            <input type="file" id="inputExcel" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" accept=".xlsx, .xls">
+                        </div>
+                        <div id="excelImportStatus" class="small text-muted mt-2 d-none" aria-live="polite"></div>
+                        <div id="excelImportProgressWrap" class="mt-2 d-none">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <small class="text-muted">Progress upload</small>
+                                <small id="excelImportProgressText" class="text-muted">0%</small>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div id="excelImportProgressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <button class="btn btn-dark btn-standard btn-block fw-bold mt-2" onclick="unggahExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Proses & Masukkan Data</button>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card p-4 page-card">
+                        <div class="module-header">
+                            <div>
+                                <h5 class="module-title">Daftar Penerima</h5>
+                                <p class="module-subtitle">Kelola penerima manfaat dengan filter dan pencarian cepat.</p>
+                            </div>
+                        </div>
+                        <div class="w-full bg-white p-4 rounded-xl shadow-sm border border-slate-100/60 mb-6 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+                            <div class="flex flex-wrap items-center gap-3 flex-1">
+                                <div class="flex items-center gap-2">
+                                    <input type="text" id="inputCari" class="h-10 w-44 sm:w-48 rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm focus:ring-1 focus:ring-emerald-500 outline-none" placeholder="Cari nama..." onkeypress="handleEnter(event)">
+                                    <button type="button" class="h-10 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 text-sm font-semibold flex items-center gap-1.5 whitespace-nowrap" onclick="currentPagePenerima = 1; tampilkanData()"><i class="bi bi-search"></i> Cari</button>
+                                </div>
+                                <select id="filterKategori" class="h-10 rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm text-slate-600 outline-none" onchange="handleFilterKategoriChange()">
+                                    <option value="Semua">Semua Kategori</option>
+                                    <option value="Panitia">Khusus Panitia</option>
+                                    <option value="Warga">Khusus Warga</option>
+                                </select>
+                                <div id="wrapperFilterRT" class="hidden">
+                                    <select id="filterRT" class="h-10 rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm text-slate-600 outline-none" onchange="currentPagePenerima = 1; tampilkanData()">
+                                        <option value="SemuaRT">Semua RT</option>
+                                    </select>
+                                </div>
+                                <select id="filterTahunPenerima" class="h-10 rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm text-slate-600 outline-none" onchange="currentPagePenerima = 1; tampilkanData()">
+                                    <option value="SemuaTahun">Semua Tahun</option>
+                                </select>
+                                <button type="button" class="h-10 border border-slate-200 hover:bg-slate-50 text-slate-600 px-4 rounded-xl text-sm flex items-center gap-1.5 whitespace-nowrap" onclick="resetPencarian()"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+                            </div>
+                            <div class="flex items-center gap-2 self-start xl:self-center">
+                                <button type="button" class="h-10 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-4 rounded-xl text-sm font-semibold flex items-center gap-1.5 whitespace-nowrap" onclick="unduhExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Excel</button>
+                                <button type="button" class="h-10 bg-rose-50 text-rose-700 hover:bg-rose-100 px-4 rounded-xl text-sm font-semibold flex items-center gap-1.5 whitespace-nowrap" onclick="cetakPDFLengkap()"><i class="bi bi-file-pdf"></i> PDF</button>
+                                <button type="button" class="h-10 bg-emerald-600 hover:bg-emerald-700 text-white px-4 rounded-xl text-sm font-semibold flex items-center gap-1.5 whitespace-nowrap" onclick="window.cetakLaporanPDF_Lengkap()"><i class="bi bi-file-earmark-text"></i> Laporan</button>
+                            </div>
+                        </div>
+                        <div id="wrapperPenerimaMonitoringRT" class="mb-6 hidden d-none">
+                            <div id="listPenerimaStatistikRT" class="grid grid-cols-2 gap-3 md:grid-cols-4"></div>
+                        </div>
+                        <div id="areaCetak" class="p-3 bg-white">
+                            <div id="headerPdf" class="text-center my-3 border-bottom pb-2">
+                                <h3 class="fw-bold mb-1">LAPORAN MANAJEMEN QURBAN AL JIHAD</h3>
+                                <p class="text-muted small mb-0" id="pdfGabunganTahunSub">Laporan Gabungan: Inventaris Hewan Qurban & Penerima Manfaat</p>
+                            </div>
+                            <h6 class="fw-bold mb-2 id-judul-penerima-pdf text-dark">Daftar Alokasi Distribusi Penerima Manfaat</h6>
+                            <div class="table-responsive">
+                                <table class="table w-full text-left border-none table-striped align-middle" id="tabelUtama">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Tahun</th>
+                                            <th>Nama</th>
+                                            <th>Kategori</th>
+                                            <th>RT</th>
+                                            <th>Status Pengambilan</th>
+                                            <th class="text-center aksi-kolom no-print">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabelPenerima"></tbody>
+                                </table>
+                            </div>
+                            <div id="paginationPenerima" class="mt-3 no-print"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="pane-panitia" role="tabpanel" aria-labelledby="tab-panitia">
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4">
+                    <div class="card p-4 h-100 page-card">
+                        <div class="module-header">
+                            <div>
+                                <h5 class="module-title">Data Panitia Qurban</h5>
+                                <p class="module-subtitle">Kelola struktur panitia tahun ini secara rapi.</p>
+                            </div>
+                        </div>
+                        <p class="small text-muted mb-3">Masukkan struktur organisasi panitia Qurban beserta nama dan kontak.</p>
+                        <form id="formPanitia" onsubmit="tambahPanitia(event)">
+                            <input type="hidden" id="idPanitia">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Tahun Organisasi</label>
+                                <select id="tahunPanitia" name="tahunPanitia" class="form-select form-select-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" required>
+                                    <option value="">Pilih Tahun</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Nama Panitia</label>
+                                <input type="text" id="namaPanitia" name="namaPanitia" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" required placeholder="Contoh: Budi Santoso">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Jabatan / Peran</label>
+                                <select id="peranPanitia" name="peranPanitia" class="form-select form-select-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" required>
+                                    <option value="">Pilih Jabatan</option>
+                                    <option value="Pelindung">Pelindung</option>
+                                    <option value="Ketua">Ketua</option>
+                                    <option value="Sekretaris">Sekretaris</option>
+                                    <option value="Bendahara">Bendahara</option>
+                                    <option value="Koordinator Peralatan & Lapangan">Koordinator Peralatan & Lapangan</option>
+                                    <option value="Anggota">Anggota</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Kontak (opsional)</label>
+                                <input type="text" id="kontakPanitia" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" placeholder="Contoh: 0812xxxxxxx atau email">
+                            </div>
+                            <button type="submit" class="btn btn-success w-100 fw-bold" id="submitPanitiaBtn">Tambahkan Panitia</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-standard btn-block fw-bold mt-2 d-none" id="cancelEditPanitia" onclick="resetFormPanitia()">Batal Edit</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="card p-4 h-100 page-card">
+                        <div class="w-full bg-white p-5 rounded-xl shadow-sm border border-slate-100/60 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div>
+                                <h5 class="text-lg font-bold text-slate-800">Struktur Organisasi Panitia Qurban</h5>
+                                <p class="text-xs text-slate-400 mt-1">Tabel panitia dengan filter tahun dan cetak laporan.</p>
+                            </div>
+                            <div class="flex items-center gap-3 self-start sm:self-center">
+                                <select id="filterTahunPanitia" class="h-10 w-40 rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm text-slate-600 focus:ring-1 focus:ring-emerald-500 outline-none transition-all" onchange="currentPagePanitia = 1; renderDataPanitia()">
+                                    <option value="SemuaTahun">Semua Tahun</option>
+                                </select>
+                                <button class="h-10 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold px-4 rounded-xl text-sm flex items-center gap-1.5 transition-all" onclick="cetakPDFPanitiaSaja()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2h-2M7 17H5a2 2 0 01-2-2v-4a2 2 0 012-2h2m10-4V3H7v4m10 0H7m10 0a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2V9a2 2 0 012-2" />
+                                    </svg>
+                                    <span>Cetak Panitia</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-standard w-full text-left border-none table-sm align-middle text-center">
+                                <thead class="table-secondary">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Tahun</th>
+                                        <th>Nama</th>
+                                        <th>Jabatan</th>
+                                        <th>Kontak</th>
+                                        <th class="no-print">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelPanitiaBody"></tbody>
+                            </table>
+                        </div>
+                        <div id="paginationPanitia" class="mt-3"></div>
+                        <p class="small text-muted mt-3">Data panitia tersimpan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="pane-keuangan" role="tabpanel" aria-labelledby="tab-keuangan">
+            <div class="row g-4" id="sectionKeuangan">
+                <div class="col-12">
+                    <div class="page-card p-4 mb-4">
+                        <div class="module-header">
+                            <div>
+                                <h4 class="module-title text-uppercase">Sheet Laporan Keuangan Qurban</h4>
+                                <p class="module-subtitle">Ringkasan kas, pemasukan, dan pengeluaran untuk pengelolaan Qurban.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-xs flex flex-col relative overflow-hidden">
+                        <div class="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
+                        <span class="text-[11px] font-bold tracking-wider text-slate-400 uppercase">Total Pemasukan</span>
+                        <h3 class="text-2xl font-black text-emerald-600 mt-1.5" id="totalPemasukanLayar">Rp 0</h3>
+                        <p class="text-xs text-slate-400 mt-1" id="subPemasukan">Semua rekam dana masuk</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-xs flex flex-col relative overflow-hidden">
+                        <div class="absolute top-0 left-0 right-0 h-1 bg-rose-500"></div>
+                        <span class="text-[11px] font-bold tracking-wider text-slate-400 uppercase">Total Pengeluaran</span>
+                        <h3 class="text-2xl font-black text-rose-600 mt-1.5" id="totalPengeluaranLayar">Rp 0</h3>
+                        <p class="text-xs text-slate-400 mt-1" id="subPengeluaran">Operasional, pisau, kresek, dll</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-xs flex flex-col relative overflow-hidden">
+                        <div class="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
+                        <span class="text-[11px] font-bold tracking-wider text-slate-400 uppercase">Saldo Akhir Sisa Kas</span>
+                        <h3 class="text-2xl font-black text-blue-600 mt-1.5" id="saldoAkhirLayar">Rp 0</h3>
+                        <p class="text-xs text-slate-400 mt-1" id="subSaldo">Bersih kas Masjid Al Jihad</p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-5">
+                    <div class="card p-4 page-card">
+                        <div class="module-header">
+                            <div>
+                                <h5 class="module-title">Input Transaksi Kas</h5>
+                                <p class="module-subtitle">Tambahkan pemasukan atau pengeluaran secara terstruktur.</p>
+                            </div>
+                        </div>
+                        <form id="formKeuangan">
+                            <input type="hidden" id="id-keuangan">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold mb-1">Tahun Anggaran</label>
+                                <select id="tahun" name="tahun" class="form-select form-select-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" required>
+                                    <option value="">Pilih Tahun</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold mb-1">Tanggal Transaksi</label>
+                                <input type="date" id="tanggal" name="tanggal" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold mb-1">Jenis Arus Dana</label>
+                                <select id="jenisKeuangan" name="jenisKeuangan" class="form-select form-select-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" required>
+                                    <option value="Pemasukan">Pemasukan (Uang Masuk / Infaq / Shahibul)</option>
+                                    <option value="Pengeluaran">Pengeluaran (Operasional / Logistik / Konsumsi)</option>
+                                </select>
+                            </div>
+                            <div id="rowKalkulatorHewan" class="bg-slate-50/70 border border-slate-200/80 rounded-xl p-3.5 mb-3.5">
+                                <span class="d-block text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-2">Parameter Hitung Nominal</span>
+                                <div class="row g-2">
+                                    <div class="col-4">
+                                        <label class="small text-dark mb-1 label-xs">Jml (Ekor/Brg)</label>
+                                        <input type="number" id="ekorKeuangan" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" placeholder="1" min="1" required value="1">
+                                    </div>
+                                    <div class="col-8">
+                                        <label class="small text-dark mb-1 label-xs">Harga Satuan (Rp)</label>
+                                        <input type="number" id="hargaEkorKeuangan" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" placeholder="Masukkan harga satuan" min="0" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold mb-1">Keterangan / Uraian</label>
+                                <input type="text" id="keteranganKeuangan" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" required placeholder="Contoh: Pembelian Kantong Plastik / Infaq H. Budi">
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold mb-1">Nominal Akhir (Rupiah)</label>
+                                <input type="number" id="nominalKeuangan" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition fw-bold text-success bg-light" readonly placeholder="Akan terisi otomatis...">
+                            </div>
+                            <button type="button" class="w-full h-10 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm transition-all shadow-xs" id="submitKeuanganBtn" onclick="tambahKeuangan()">
+                                Tambahkan ke Jurnal
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-standard btn-block fw-bold mt-2 d-none" id="cancelEditKeuangan" onclick="resetFormKeuangan()">Batal Edit</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-xl-8 col-lg-7">
+                    <div class="card p-4 page-card">
+                        <div class="module-header">
+                            <div>
+                                <h5 class="module-title">Jurnal Finansial & Kas Buku Besar</h5>
+                                <p class="module-subtitle">Lihat transaksi kas dan jurnal keuangan secara terperinci.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 self-end mb-4">
+                            <div class="flex items-center gap-2">
+                                <select id="filterTahunKeuangan" class="form-select form-select-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" onchange="currentPageKeuangan = 1; tampilkanDataKeuangan()">
+                                    <option value="SemuaTahun">Semua Tahun</option>
+                                </select>
+                                <button class="h-10 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold px-4 rounded-xl text-sm flex items-center gap-2 transition-all whitespace-nowrap border border-rose-100/50" onclick="cetakPDFKeuanganSaja()">
+                                    <i class="bi bi-file-pdf"></i>
+                                    <span>PDF Keuangan</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-standard w-full text-left border-none table-hover table-sm align-middle small text-center">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Tahun</th>
+                                        <th>Tanggal</th>
+                                        <th>Uraian / Keterangan</th>
+                                        <th>Detail Rumus</th>
+                                        <th>Pemasukan (Rp)</th>
+                                        <th>Pengeluaran (Rp)</th>
+                                        <th class="aksi-kolom no-print">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelKeuanganLayar"></tbody>
+                            </table>
+                        </div>
+                            <div id="paginationKeuangan" class="mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </main>
+    </section>
+</div>
+
+    <!-- ===== Bootstrap Bundle JS ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- ===== Vendor Libraries ===== -->
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lucide/dist/lucide.min.js"></script>
+
+    <!-- ===== Utility Scripts ===== -->
+    <script src="assets/js/utils/cache.js"></script>
+    <script src="assets/js/utils/formatters.js"></script>
+    <script src="assets/js/utils/validators.js"></script>
+    <script src="assets/js/utils/helpers.js"></script>
+
+    <script>
+        (function() {
+            function getStoredActivities() {
+                try {
+                    const rawData = localStorage.getItem('qurban_activity_stack');
+                    const parsed = rawData ? JSON.parse(rawData) : [];
+                    return Array.isArray(parsed) ? parsed : [];
+                } catch (error) {
+                    console.warn('Gagal membaca aktivitas sistem:', error);
+                    return [];
+                }
+            }
+
+            window.logSystemActivity = function(actionMessage) {
+                if (!actionMessage) return;
+
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const newActivity = {
+                    message: actionMessage,
+                    time: timeString
+                };
+
+                let activityList = getStoredActivities();
+                activityList.unshift(newActivity);
+
+                if (activityList.length > 3) {
+                    activityList = activityList.slice(0, 3);
+                }
+
+                try {
+                    localStorage.setItem('qurban_activity_stack', JSON.stringify(activityList));
+                } catch (error) {
+                    console.warn('Gagal menyimpan aktivitas sistem:', error);
+                }
+
+                window.updateSidebarActivityUI();
+            };
+
+            window.updateSidebarActivityUI = function() {
+                const listContainer = document.getElementById('activity-log-list');
+                const boxEl = document.getElementById('sidebar-activity-box');
+                if (!listContainer) return;
+
+                const activityList = getStoredActivities();
+
+                if (activityList.length === 0) {
+                    listContainer.innerHTML = '<p class="text-xs font-medium italic text-slate-400">Belum ada aktivitas</p>';
+                    return;
+                }
+
+                listContainer.innerHTML = activityList.map((item, idx) => `
+                    <div class="flex flex-col border-l-2 ${idx === 0 ? 'border-emerald-500 bg-emerald-50/20' : 'border-slate-200'} py-0.5 pl-2 transition-all">
+                        <p class="text-xs font-bold ${idx === 0 ? 'text-slate-800' : 'text-slate-600'} leading-tight">${item.message}</p>
+                        <span class="mt-0.5 text-[9px] font-medium text-slate-400">Pukul ${item.time} WIB</span>
+                    </div>
+                `).join('');
+
+                if (boxEl) {
+                    boxEl.classList.add('border-emerald-200');
+                    setTimeout(() => boxEl.classList.remove('border-emerald-200'), 800);
+                }
+            };
+
+            document.addEventListener('DOMContentLoaded', window.updateSidebarActivityUI);
+        })();
+    </script>
+
+    <!-- ===== API Client ===== -->
+    <script src="assets/js/api-client.js"></script>
+
+    <!-- ===== App Modules ===== -->
+    <script src="assets/js/modules/dashboard.js"></script>
+    <script src="assets/js/modules/hewan.js"></script>
+    <script src="assets/js/modules/penerima.js"></script>
+    <script src="assets/js/modules/distribusi.js?v=20260713"></script>
+    <script src="assets/js/modules/keuangan.js"></script>
+    <script src="assets/js/modules/panitia.js"></script>
+
+    <!-- ===== App Main Entry Point ===== -->
+    <script src="assets/js/main.js?v=20260713"></script>
+
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test getRTList Endpoint</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        textarea { width: 100%; height: 200px; }
+        button { padding: 10px 20px; margin: 10px 0; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Test getRTList Endpoint</h1>
+    
+    <h3>Without Tahun Filter:</h3>
+    <button onclick="testEndpoint('')">Test getRTList (no tahun)</button>
+    <textarea id="output1" readonly></textarea>
+    
+    <h3>With Tahun Filter (1447 H / 2026 M):</h3>
+    <button onclick="testEndpoint('1447 H / 2026 M')">Test getRTList with tahun</button>
+    <textarea id="output2" readonly></textarea>
+
+    <script>
+        async function testEndpoint(tahun) {
+            const url = tahun 
+                ? `api.php?action=getRTList&tahun=${encodeURIComponent(tahun)}`
+                : `api.php?action=getRTList`;
+            
+            console.log('Fetching:', url);
+            
+            try {
+                const response = await fetch(url);
+                console.log('Response status:', response.status);
+                const result = await response.json();
+                console.log('Response:', result);
+                
+                const outputId = tahun ? 'output2' : 'output1';
+                document.getElementById(outputId).value = JSON.stringify(result, null, 2);
+                
+                if (result.success) {
+                    document.getElementById(outputId).style.color = 'green';
+                } else {
+                    document.getElementById(outputId).style.color = 'red';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                const outputId = tahun ? 'output2' : 'output1';
+                document.getElementById(outputId).value = 'Error: ' + error.message;
+                document.getElementById(outputId).style.color = 'red';
+            }
+        }
+    </script>
+</body>
+</html>

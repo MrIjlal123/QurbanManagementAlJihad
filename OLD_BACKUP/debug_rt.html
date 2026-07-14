@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug RT List & Database</title>
+    <style>
+        body { font-family: Arial; padding: 20px; line-height: 1.6; }
+        section { margin: 20px 0; border: 1px solid #ccc; padding: 15px; }
+        textarea { width: 100%; height: 150px; font-size: 12px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        h2 { color: #333; }
+        .success { background: #d4edda; }
+        .error { background: #f8d7da; }
+        .info { background: #d1ecf1; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug: RT List & Database Verification</h1>
+    
+    <section class="info">
+        <h2>1. Test getRTList Endpoint (All Tahun)</h2>
+        <button onclick="testGetRTList()">Call getRTList (no tahun filter)</button>
+        <textarea id="output1" readonly></textarea>
+    </section>
+
+    <section class="info">
+        <h2>2. Test getRTList Endpoint (With Tahun)</h2>
+        <label>Tahun: <input type="text" id="tahunInput" placeholder="1447 H / 2026 M"></label>
+        <button onclick="testGetRTListWithTahun()">Call getRTList with tahun</button>
+        <textarea id="output2" readonly></textarea>
+    </section>
+
+    <section class="info">
+        <h2>3. Get All Available Tahun</h2>
+        <button onclick="testGetTahun()">Call getTahun</button>
+        <textarea id="output3" readonly></textarea>
+    </section>
+
+    <section class="info">
+        <h2>4. Database Info (Raw SQL)</h2>
+        <button onclick="testDatabaseInfo()">Get Database Stats</button>
+        <textarea id="output4" readonly></textarea>
+    </section>
+
+    <section class="info">
+        <h2>5. Query Penerima Table</h2>
+        <button onclick="testPenerimaCount()">Count Penerima by Kategori</button>
+        <textarea id="output5" readonly></textarea>
+    </section>
+
+    <script>
+        const apiUrl = 'api.php';
+
+        function log(id, message) {
+            const textarea = document.getElementById(id);
+            textarea.value += message + '\n';
+            textarea.scrollTop = textarea.scrollHeight;
+        }
+
+        function clear(id) {
+            document.getElementById(id).value = '';
+        }
+
+        async function testGetRTList() {
+            clear('output1');
+            log('output1', '⏳ Fetching...');
+            try {
+                const response = await fetch(`${apiUrl}?action=getRTList`);
+                log('output1', `Response Status: ${response.status}`);
+                const result = await response.json();
+                log('output1', `Success: ${result.success}`);
+                log('output1', `Data: ${JSON.stringify(result.data, null, 2)}`);
+                if (result.data.length === 0) {
+                    log('output1', '⚠️ WARNING: No RT data returned!');
+                } else {
+                    log('output1', `✅ Total RT found: ${result.data.length}`);
+                }
+            } catch (error) {
+                log('output1', `❌ Error: ${error.message}`);
+            }
+        }
+
+        async function testGetRTListWithTahun() {
+            clear('output2');
+            const tahun = document.getElementById('tahunInput').value;
+            if (!tahun) {
+                log('output2', '❌ Please enter tahun first');
+                return;
+            }
+            log('output2', `⏳ Fetching with tahun: ${tahun}`);
+            try {
+                const response = await fetch(`${apiUrl}?action=getRTList&tahun=${encodeURIComponent(tahun)}`);
+                log('output2', `Response Status: ${response.status}`);
+                const result = await response.json();
+                log('output2', `Success: ${result.success}`);
+                log('output2', `Data: ${JSON.stringify(result.data, null, 2)}`);
+                if (result.data.length === 0) {
+                    log('output2', '⚠️ WARNING: No RT data for this tahun!');
+                } else {
+                    log('output2', `✅ Total RT found: ${result.data.length}`);
+                }
+            } catch (error) {
+                log('output2', `❌ Error: ${error.message}`);
+            }
+        }
+
+        async function testGetTahun() {
+            clear('output3');
+            log('output3', '⏳ Fetching...');
+            try {
+                const response = await fetch(`${apiUrl}?action=getTahun`);
+                log('output3', `Response Status: ${response.status}`);
+                const result = await response.json();
+                log('output3', `Success: ${result.success}`);
+                log('output3', `Data: ${JSON.stringify(result.data, null, 2)}`);
+                if (result.data.length === 0) {
+                    log('output3', '❌ No tahun data found!');
+                } else {
+                    log('output3', `✅ Total tahun found: ${result.data.length}`);
+                }
+            } catch (error) {
+                log('output3', `❌ Error: ${error.message}`);
+            }
+        }
+
+        async function testDatabaseInfo() {
+            clear('output4');
+            log('output4', '⏳ Fetching database info...');
+            try {
+                const response = await fetch(`${apiUrl}?action=debugDatabaseInfo`);
+                log('output4', `Response Status: ${response.status}`);
+                const result = await response.json();
+                log('output4', JSON.stringify(result, null, 2));
+            } catch (error) {
+                log('output4', `❌ Error: ${error.message}`);
+                log('output4', 'Note: This endpoint might not exist yet');
+            }
+        }
+
+        async function testPenerimaCount() {
+            clear('output5');
+            log('output5', '⏳ Fetching penerima count...');
+            try {
+                const response = await fetch(`${apiUrl}?action=debugPenerimaCount`);
+                log('output5', `Response Status: ${response.status}`);
+                const result = await response.json();
+                log('output5', JSON.stringify(result, null, 2));
+            } catch (error) {
+                log('output5', `❌ Error: ${error.message}`);
+                log('output5', 'Note: This endpoint might not exist yet');
+            }
+        }
+
+        // Auto-fill tahun with example
+        document.getElementById('tahunInput').value = '1447 H / 2026 M';
+    </script>
+</body>
+</html>
