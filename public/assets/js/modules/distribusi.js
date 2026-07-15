@@ -303,17 +303,35 @@ function populateShahibulHewanOptions() {
             select._allOptions = [];
             select.innerHTML = '<option value="">-- Pilih Hewan --</option>';
             
-            if (result.success && Array.isArray(result.data)) {
-                result.data.forEach(hewan => {
-                    if (sourceFilter === '' || hewan.jenis === sourceFilter) {
+                if (result.success && Array.isArray(result.data)) {
+                // Build options for hewan. If sumber is Kambing and Shahibul mode,
+                // create an aggregated option representing all kambing to allow
+                // quick distribution without selecting one-by-one.
+                const filteredHewan = result.data.filter(h => sourceFilter === '' || h.jenis === sourceFilter);
+                if (sourceFilter === 'Kambing') {
+                    const totalBerat = filteredHewan.reduce((s, h) => s + (parseFloat(h.daging || h.kotor || 0) || 0), 0);
+                    const count = filteredHewan.length;
+                    if (count > 0) {
                         select._allOptions.push({
-                            id: hewan.id,
-                            berat: hewan.daging || hewan.kotor || 0,
-                            pemilik: hewan.pemilik || '',
-                            jenis: hewan.jenis || '',
-                            label: `${hewan.jenis} - Pemilik: ${hewan.pemilik} (Berat: ${formatWeight(hewan.daging || hewan.kotor || 0)})`
+                            id: 'ALL_KAMBING',
+                            berat: totalBerat,
+                            pemilik: '',
+                            jenis: 'Kambing',
+                            count: count,
+                            label: `Semua Kambing - ${count} ekor (Total: ${formatWeight(totalBerat)})`
                         });
                     }
+                }
+
+                // Also keep individual items available (optional)
+                filteredHewan.forEach(hewan => {
+                    select._allOptions.push({
+                        id: hewan.id,
+                        berat: hewan.daging || hewan.kotor || 0,
+                        pemilik: hewan.pemilik || '',
+                        jenis: hewan.jenis || '',
+                        label: `${hewan.jenis} - Pemilik: ${hewan.pemilik} (Berat: ${formatWeight(hewan.daging || hewan.kotor || 0)})`
+                    });
                 });
             }
 
@@ -353,8 +371,9 @@ function renderShahibulHewanOptions(filterText = '') {
         const opt = document.createElement('option');
         opt.value = item.id;
         opt.dataset.berat = item.berat;
-        opt.dataset.pemilik = item.pemilik;
-        opt.dataset.jenis = item.jenis;
+        if (item.pemilik) opt.dataset.pemilik = item.pemilik;
+        if (item.jenis) opt.dataset.jenis = item.jenis;
+        if (item.count) opt.dataset.count = item.count;
         opt.textContent = item.label;
         select.appendChild(opt);
     });
@@ -547,43 +566,76 @@ async function handleDistribusiSubmit(event) {
             return;
         }
         
-        const selectedHewanId = parseInt(hewanSelect.value, 10);
+        const selectedRaw = hewanSelect.value;
         const selectedOption = hewanSelect.options[hewanSelect.selectedIndex];
-        
-        // Ambil data pemilik dari option dataset (sudah ter-load saat populateShahibulHewanOptions)
-        const pemilikStr = selectedOption?.dataset?.pemilik || '';
-        const selectedJenis = String(selectedOption?.dataset?.jenis || '').trim();
-        
-        const owners = parseOwnerNames(pemilikStr);
-        if (owners.length === 0) {
-            showToast('Hewan yang dipilih tidak memiliki pemilik yang valid.', 'warning');
-            return;
-        }
-        
-        if (hasExistingDistribusiForSahibul(tahun, selectedHewanId)) {
-            showToast(`Distribusi untuk hewan ini pada tahun ${tahun} sudah pernah dibuat. Tidak dapat diinput ulang.`, 'error', 5000);
-            return;
-        }
 
-        // Untuk sapi, satu ekor dibagi ke 7 bagian, sehingga total distribusi memakai faktor 7.
-        const jumlahSohibul = getSahibulShareCount(owners.length, source, selectedJenis);
-        const totalBeratPerOwner = owners.length > 0 ? (beratPerPemilikInput * jumlahSohibul) / owners.length : 0;
-        
-        owners.forEach(owner => {
+        // If user chose the aggregated ALL_KAMBING option, create a single
+        // distribusi record for all kambing (jumlah dikalikan dengan input berat per pemilik).
+        if (selectedRaw === 'ALL_KAMBING') {
+            const jumlahKambing = parseInt(selectedOption?.dataset?.count || 0, 10) || 0;
+            if (jumlahKambing <= 0) {
+                showToast('Tidak ditemukan data kambing untuk tahun ini.', 'warning');
+                return;
+            }
+
+            // Prevent duplicate aggregated distribusi for the same year
+            const existsAgg = distribusiRows.some(r => String(r.tahun || '').trim() === String(tahun).trim() && (String(r.kategori || '').trim().toLowerCase() === 'sahibul qurban' || String(r.kategori || '').trim().toLowerCase() === 'shahibul qurban') && String(r.label || '').toLowerCase().includes('semua kambing'));
+            if (existsAgg) {
+                showToast(`Distribusi untuk Semua Kambing pada tahun ${tahun} sudah pernah dibuat.`, 'error');
+                return;
+            }
+
+            const totalBerat = beratPerPemilikInput * jumlahKambing;
             rows.push({
                 tahun: String(tahun || ''),
                 kategori: 'Sahibul Qurban',
                 sumber: source,
-                label: owner,
+                label: 'Semua Kambing',
                 rt: '',
-                beratPerBungkus: totalBeratPerOwner,
-                jumlahBungkus: 1,
-                totalBerat: totalBeratPerOwner,
-                hewanId: selectedHewanId,
-                jumlahSohibul: jumlahSohibul,
+                beratPerBungkus: beratPerPemilikInput,
+                jumlahBungkus: jumlahKambing,
+                totalBerat: totalBerat,
+                hewanId: null,
+                jumlahSohibul: jumlahKambing,
                 beratPerSohibul: beratPerPemilikInput
             });
-        });
+        } else {
+            // Ambil data pemilik dari option dataset (sudah ter-load saat populateShahibulHewanOptions)
+            const pemilikStr = selectedOption?.dataset?.pemilik || '';
+            const selectedJenis = String(selectedOption?.dataset?.jenis || '').trim();
+
+            const owners = parseOwnerNames(pemilikStr);
+            if (owners.length === 0) {
+                showToast('Hewan yang dipilih tidak memiliki pemilik yang valid.', 'warning');
+                return;
+            }
+
+            const selectedHewanId = parseInt(selectedRaw, 10);
+            if (hasExistingDistribusiForSahibul(tahun, selectedHewanId)) {
+                showToast(`Distribusi untuk hewan ini pada tahun ${tahun} sudah pernah dibuat. Tidak dapat diinput ulang.`, 'error', 5000);
+                return;
+            }
+
+            // Untuk sapi, satu ekor dibagi ke 7 bagian, sehingga total distribusi memakai faktor 7.
+            const jumlahSohibul = getSahibulShareCount(owners.length, source, selectedJenis);
+            const totalBeratPerOwner = owners.length > 0 ? (beratPerPemilikInput * jumlahSohibul) / owners.length : 0;
+
+            owners.forEach(owner => {
+                rows.push({
+                    tahun: String(tahun || ''),
+                    kategori: 'Sahibul Qurban',
+                    sumber: source,
+                    label: owner,
+                    rt: '',
+                    beratPerBungkus: totalBeratPerOwner,
+                    jumlahBungkus: 1,
+                    totalBerat: totalBeratPerOwner,
+                    hewanId: selectedHewanId,
+                    jumlahSohibul: jumlahSohibul,
+                    beratPerSohibul: beratPerPemilikInput
+                });
+            });
+        }
     } else if (String(category || '').trim().toLowerCase() === 'panitia') {
         const jumlahPanitia = Array.isArray(dataPenerima)
             ? dataPenerima.filter(p => String(p.kategori || '').trim().toLowerCase() === 'panitia' && String(p.tahun || '').trim() === String(tahun).trim()).length
