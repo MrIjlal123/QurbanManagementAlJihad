@@ -227,6 +227,17 @@ function updateOwnerFieldControls() {
     }
 }
 
+function getSahibulShareCount(ownerCount, source, jenis) {
+    const sourceNormalized = String(source || '').trim().toLowerCase();
+    const jenisNormalized = String(jenis || '').trim().toLowerCase();
+
+    if (sourceNormalized === 'sapi' || jenisNormalized === 'sapi') {
+        return 7;
+    }
+
+    return Math.max(1, parseInt(ownerCount, 10) || 1);
+}
+
 function renderShahibulOwnerList() {
     const list = document.getElementById('shahibulAutoList');
     if (!list) return;
@@ -241,7 +252,8 @@ function renderShahibulOwnerList() {
         .flatMap((h) => {
             const owners = parseOwnerNames(h.pemilik);
             const totalDaging = parseFloat(h.daging || h.kotor || 0) || 0;
-            const beratPerOwner = owners.length > 0 ? totalDaging / owners.length : 0;
+            const shareCount = getSahibulShareCount(owners.length, sourceLower, h.jenis);
+            const beratPerOwner = owners.length > 0 ? totalDaging / shareCount : 0;
             return owners.map((name) => ({
                 name,
                 jenis: h.jenis || '-',
@@ -264,7 +276,7 @@ function renderShahibulOwnerList() {
             const jenis = Array.from(detail.jenis).join(', ');
             return `<div class="flex justify-between gap-2 border-b border-slate-100 py-2 text-sm">
                 <span>${name}</span>
-                <span class="font-semibold text-slate-900">${detail.total.toFixed(2)} KG <span class="text-slate-400">(${jenis})</span></span>
+                <span class="font-semibold text-slate-900">${formatWeight(detail.total)} <span class="text-slate-400">(${jenis})</span></span>
             </div>`;
         }).join('')
         : '<span class="text-muted">Belum ada pemilik untuk tahun dan sumber daging ini.</span>';

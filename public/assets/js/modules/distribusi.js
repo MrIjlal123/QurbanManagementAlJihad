@@ -311,7 +311,7 @@ function populateShahibulHewanOptions() {
                             berat: hewan.daging || hewan.kotor || 0,
                             pemilik: hewan.pemilik || '',
                             jenis: hewan.jenis || '',
-                            label: `${hewan.jenis} - Pemilik: ${hewan.pemilik} (Berat: ${hewan.daging || hewan.kotor || 0} KG)`
+                            label: `${hewan.jenis} - Pemilik: ${hewan.pemilik} (Berat: ${formatWeight(hewan.daging || hewan.kotor || 0)})`
                         });
                     }
                 });
@@ -354,6 +354,7 @@ function renderShahibulHewanOptions(filterText = '') {
         opt.value = item.id;
         opt.dataset.berat = item.berat;
         opt.dataset.pemilik = item.pemilik;
+        opt.dataset.jenis = item.jenis;
         opt.textContent = item.label;
         select.appendChild(opt);
     });
@@ -439,9 +440,9 @@ function updateBeratShahibulField() {
     const selectedOption = select.options[select.selectedIndex];
     if (selectedOption && selectedOption.value) {
         const berat = parseFloat(selectedOption.dataset.berat) || 0;
-        display.textContent = `${berat} KG`;
+        display.textContent = formatWeight(berat);
     } else {
-        display.textContent = '0 KG';
+        display.textContent = formatWeight(0);
     }
 }
 
@@ -551,11 +552,7 @@ async function handleDistribusiSubmit(event) {
         
         // Ambil data pemilik dari option dataset (sudah ter-load saat populateShahibulHewanOptions)
         const pemilikStr = selectedOption?.dataset?.pemilik || '';
-        
-        if (!pemilikStr) {
-            showToast('Data pemilik hewan tidak ditemukan. Silakan pilih hewan lagi.', 'error');
-            return;
-        }
+        const selectedJenis = String(selectedOption?.dataset?.jenis || '').trim();
         
         const owners = parseOwnerNames(pemilikStr);
         if (owners.length === 0) {
@@ -568,9 +565,9 @@ async function handleDistribusiSubmit(event) {
             return;
         }
 
-        // Hitung total berat: berat per pemilik × jumlah pemilik
-        const jumlahSohibul = owners.length;
-        const totalBeratDistribusi = beratPerPemilikInput * jumlahSohibul;
+        // Untuk sapi, satu ekor dibagi ke 7 bagian, sehingga total distribusi memakai faktor 7.
+        const jumlahSohibul = getSahibulShareCount(owners.length, source, selectedJenis);
+        const totalBeratPerOwner = owners.length > 0 ? (beratPerPemilikInput * jumlahSohibul) / owners.length : 0;
         
         owners.forEach(owner => {
             rows.push({
@@ -579,9 +576,9 @@ async function handleDistribusiSubmit(event) {
                 sumber: source,
                 label: owner,
                 rt: '',
-                beratPerBungkus: beratPerPemilikInput,
+                beratPerBungkus: totalBeratPerOwner,
                 jumlahBungkus: 1,
-                totalBerat: beratPerPemilikInput,
+                totalBerat: totalBeratPerOwner,
                 hewanId: selectedHewanId,
                 jumlahSohibul: jumlahSohibul,
                 beratPerSohibul: beratPerPemilikInput
@@ -840,7 +837,7 @@ function renderDistribusiResults(rows) {
                 <td>${jumlahSohibul > 1 ? jumlahSohibul : '-'}</td>
                 <td>${beratPerBungkus.toFixed(2)}</td>
                 <td>${row.jumlahBungkus || row.jumlah_bungkus || 0}</td>
-                <td>${rowTotalBerat.toFixed(2)}</td>
+                <td>${Math.round(rowTotalBerat)}</td>
                 <td class="no-print"><button type="button" class="rounded-xl bg-rose-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-rose-700" onclick="deleteDistribusiRow('${safeId}')">Hapus</button></td>
             </tr>
         `;
@@ -851,7 +848,7 @@ function renderDistribusiResults(rows) {
     }
 
     totalBungkusEl.innerText = totalBungkus;
-    totalBeratEl.innerText = totalBerat.toFixed(2);
+    totalBeratEl.innerText = Math.round(totalBerat);
 
     renderPaginationControls('paginationDistribusi', currentPageDistribusi, totalPages, 'goToDistribusiPage');
 }
