@@ -989,12 +989,12 @@ async function printDistribusiReport() {
         r.rt ? formatRtLabel(r.rt) : '-',
         r.beratPerBungkus.toFixed(2),
         r.jumlahBungkus,
-        r.totalBerat.toFixed(2)
+        Math.round(Number(r.totalBerat || r.total_berat || 0))
     ]) : [[{ content: 'Tidak ada data distribusi untuk filter ini.', colSpan: 9, styles: { halign: 'center' } }]];
 
     if (normalizedRows.length > 0) {
         const totalBungkus = normalizedRows.reduce((sum, r) => sum + (Number(r.jumlahBungkus) || 0), 0);
-        const totalBerat = normalizedRows.reduce((sum, r) => sum + (Number(r.totalBerat) || 0), 0);
+        const totalBerat = normalizedRows.reduce((sum, r) => sum + Math.round(Number(r.totalBerat || r.total_berat || 0) || 0), 0);
         tableData.push([
             'TOTAL',
             '',
@@ -1004,7 +1004,7 @@ async function printDistribusiReport() {
             '',
             '',
             totalBungkus,
-            totalBerat.toFixed(2)
+            totalBerat
         ]);
     }
 
