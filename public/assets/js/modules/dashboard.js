@@ -66,7 +66,7 @@ function renderDashboardSummary() {
     if (dashTotalSapi) dashTotalSapi.innerText = Number.isFinite(sapiCount) ? sapiCount : (Array.isArray(dataHewan) ? dataHewan.filter(h => (h.jenis || '').toString().toLowerCase() === 'sapi').length : 0);
     if (dashTotalKambing) dashTotalKambing.innerText = Number.isFinite(kambingCount) ? kambingCount : (Array.isArray(dataHewan) ? dataHewan.filter(h => (h.jenis || '').toString().toLowerCase() === 'kambing').length : 0);
     if (dashTotalHewan) dashTotalHewan.innerText = Number.isFinite(hewan.total) ? hewan.total : (Array.isArray(dataHewan) ? dataHewan.length : 0);
-    if (dashBeratBersih) dashBeratBersih.innerText = Number.isFinite(totalDaging) ? `${totalDaging.toFixed(2)} KG` : `${(Array.isArray(dataHewan) ? dataHewan.reduce((sum, h) => sum + (parseFloat(h.daging ?? h.berat_daging ?? 0) || 0), 0) : 0).toFixed(2)} KG`;
+    if (dashBeratBersih) dashBeratBersih.innerText = Number.isFinite(totalDaging) ? formatWeight(totalDaging) : formatWeight((Array.isArray(dataHewan) ? dataHewan.reduce((sum, h) => sum + (parseFloat(h.daging ?? h.berat_daging ?? 0) || 0), 0) : 0));
 }
 
 /**
@@ -435,7 +435,7 @@ function ensureDashboardLayout() {
                         </div>
                         <div class="flex flex-col">
                             <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Total Berat Bersih</span>
-                            <h3 id="dashBeratBersih" class="text-2xl font-bold text-slate-800 mt-0.5">0 KG</h3>
+                            <h3 id="dashBeratBersih" class="text-2xl font-bold text-slate-800 mt-0.5">0</h3>
                         </div>
                     </div>
                     <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-3 hover:shadow-md transition-all">
@@ -527,18 +527,55 @@ function renderDashboard() {
     if (dashTotalHewan) dashTotalHewan.innerText = totalHewan;
     if (dashTotalSapi) dashTotalSapi.innerText = totalSapi;
     if (dashTotalKambing) dashTotalKambing.innerText = totalKambing;
-    if (dashBeratBersih) dashBeratBersih.innerText = `${totalBeratBersih.toFixed(2)} KG`;
+    if (dashBeratBersih) dashBeratBersih.innerText = formatWeight(totalBeratBersih);
 
     const chartElement = document.getElementById('dashboardRtChart');
     if (!chartElement) return;
 
     const counts = filteredRows.reduce((acc, row) => {
-        const rt = normalizeRtValue(row.rt || row.RT || row.rt_distribusi || '') || 'Lainnya';
-        acc[rt] = (acc[rt] || 0) + (parseFloat(row.jumlahBungkus ?? row.jumlah_bungkus ?? row.jumlah_penerima ?? 0) || 0);
+        const rawCategory = String(row?.kategori || row?.Kategori || '').trim();
+        const normalizedCategory = rawCategory.toLowerCase();
+        const rtValue = normalizeRtValue(row?.rt || row?.RT || row?.rt_distribusi || '');
+        const category = /sahibul|shahibul/i.test(rawCategory)
+            ? 'Sahibul Qurban'
+            : normalizedCategory === 'panitia'
+                ? 'Panitia'
+                : normalizedCategory === 'per rt' || normalizedCategory === 'per-rt'
+                    ? (rtValue ? `RT ${rtValue}` : 'RT -')
+                    : (rawCategory || 'Lainnya');
+
+        acc[category] = (acc[category] || 0) + (parseFloat(row.jumlahBungkus ?? row.jumlah_bungkus ?? row.jumlah_penerima ?? 0) || 0);
         return acc;
     }, {});
 
-    const labels = Object.keys(counts).sort();
+    const labels = Object.keys(counts).sort((a, b) => {
+        if (a === 'Sahibul Qurban') return -1;
+        if (b === 'Sahibul Qurban') return 1;
+
+        const aIsPanitia = a === 'Panitia';
+        const bIsPanitia = b === 'Panitia';
+        if (aIsPanitia && bIsPanitia) return 0;
+        if (aIsPanitia) return -1;
+        if (bIsPanitia) return 1;
+
+        const aIsLainnya = a === 'Lainnya';
+        const bIsLainnya = b === 'Lainnya';
+        if (aIsLainnya && bIsLainnya) return 0;
+        if (aIsLainnya) return 1;
+        if (bIsLainnya) return -1;
+
+        const aIsRt = /^RT\s+\d+$/i.test(a);
+        const bIsRt = /^RT\s+\d+$/i.test(b);
+        if (aIsRt && bIsRt) {
+            const aNumber = parseInt(a.match(/\d+/)[0], 10);
+            const bNumber = parseInt(b.match(/\d+/)[0], 10);
+            return aNumber - bNumber;
+        }
+        if (aIsRt) return -1;
+        if (bIsRt) return 1;
+
+        return a.localeCompare(b);
+    });
     const data = labels.map(label => counts[label]);
 
     if (dashboardRtChart && dashboardRtChart.data && Array.isArray(dashboardRtChart.data.datasets)) {
@@ -572,7 +609,7 @@ function renderDashboard() {
         data: {
             labels,
             datasets: [{
-                label: 'Jumlah Bungkus per RT',
+                label: 'Jumlah Bungkus per Kategori',
                 data,
                 backgroundColor: chartGradient,
                 borderColor: '#10b981',
@@ -650,8 +687,8 @@ function renderDashboardHewanTable(page = 1) {
                 <td class="px-4 py-3 text-sm text-slate-600">${rtValue}</td>
                 <td class="px-4 py-3 text-sm text-slate-600">${jenisBadge}</td>
                 <td class="px-4 py-3 text-sm font-medium text-slate-700">${formatOwnersForExport(h.pemilik)}</td>
-                <td class="px-4 py-3 text-sm text-slate-600">${beratKotor.toFixed(2)} KG</td>
-                <td class="px-4 py-3 text-sm text-slate-600">${beratNetto.toFixed(2)} KG</td>
+                <td class="px-4 py-3 text-sm text-slate-600">${formatWeight(beratKotor)}</td>
+                <td class="px-4 py-3 text-sm text-slate-600">${formatWeight(beratNetto)}</td>
                 <td class="px-4 py-3 text-sm text-slate-600">${h.keterangan || '-'}</td>
             </tr>`;
         }).join('');
