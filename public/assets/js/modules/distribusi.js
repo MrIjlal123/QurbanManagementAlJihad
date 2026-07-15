@@ -395,7 +395,15 @@ function renderShahibulHewanOptions(filterText = '') {
         const optionItem = document.createElement('div');
         optionItem.dataset.value = item.id;
         optionItem.className = 'custom-option cursor-pointer rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition';
-        optionItem.textContent = item.label;
+        // special styling and tooltip for aggregated kambing option
+        if (String(item.id) === 'ALL_KAMBING') {
+            optionItem.classList.add('highlight-all-kambing');
+            optionItem.innerHTML = `${item.label} <span class="agg-badge">Agregat</span>`;
+            optionItem.title = 'Pilih ini untuk mendistribusikan semua kambing sekaligus (jumlah kambing × berat per pemilik)';
+        } else {
+            optionItem.textContent = item.label;
+        }
+
         optionItem.addEventListener('click', () => {
             if (customSearch) {
                 customSearch.value = item.label;
@@ -443,6 +451,20 @@ function initializeShahibulHewanCombobox() {
             customOptions.classList.add('hidden');
         }
     });
+
+    // Reflect selection changes to show/hide aggregated badge when user selects from real select
+    const selectEl = document.getElementById('hewanShahibul');
+    if (selectEl) {
+        selectEl.addEventListener('change', () => {
+            const aggBadge = document.getElementById('aggKambingBadge');
+            if (!aggBadge) return;
+            if (selectEl.value === 'ALL_KAMBING') {
+                aggBadge.classList.remove('d-none');
+            } else {
+                aggBadge.classList.add('d-none');
+            }
+        });
+    }
 
     initializeShahibulHewanCombobox._initialized = true;
 }
@@ -599,6 +621,11 @@ async function handleDistribusiSubmit(event) {
                 jumlahSohibul: jumlahKambing,
                 beratPerSohibul: beratPerPemilikInput
             });
+            // show UI badge to indicate aggregated kambing selection
+            const aggBadge = document.getElementById('aggKambingBadge');
+            if (aggBadge) {
+                aggBadge.classList.remove('d-none');
+            }
         } else {
             // Ambil data pemilik dari option dataset (sudah ter-load saat populateShahibulHewanOptions)
             const pemilikStr = selectedOption?.dataset?.pemilik || '';
@@ -635,6 +662,11 @@ async function handleDistribusiSubmit(event) {
                     beratPerSohibul: beratPerPemilikInput
                 });
             });
+            // hide aggregated badge for individual selections
+            const aggBadge = document.getElementById('aggKambingBadge');
+            if (aggBadge) {
+                aggBadge.classList.add('d-none');
+            }
         }
     } else if (String(category || '').trim().toLowerCase() === 'panitia') {
         const jumlahPanitia = Array.isArray(dataPenerima)
