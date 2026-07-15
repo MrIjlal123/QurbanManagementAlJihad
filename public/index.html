@@ -432,7 +432,7 @@
                                             </div>
                                             <div class="flex-1">
                                                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Berat Bersih</div>
-                                                <div id="dashBeratBersih" class="text-xl font-bold text-slate-800 my-1">0 KG</div>
+                                                <div id="dashBeratBersih" class="text-xl font-bold text-slate-800 my-1">0</div>
                                                 <div class="text-xs text-slate-400 font-medium">Estimasi berat daging bersih</div>
                                             </div>
                                         </div>
@@ -525,19 +525,19 @@
                                 <div>
                                     <div class="border rounded-xl p-3 bg-white">
                                         <div class="text-[11px] text-slate-400 uppercase tracking-wider mb-1.5">Total Daging Masuk</div>
-                                        <div id="summaryTotalDagingMasuk" class="font-extrabold text-lg text-slate-800">0 KG</div>
+                                        <div id="summaryTotalDagingMasuk" class="font-extrabold text-lg text-slate-800">0</div>
                                     </div>
                                 </div>
                                 <div>
                                     <div class="border rounded-xl p-3 bg-white">
                                         <div class="text-[11px] text-slate-400 uppercase tracking-wider mb-1.5">Total Daging Didistribusikan</div>
-                                        <div id="summaryTotalDagingDidistribusikan" class="font-extrabold text-lg text-slate-800">0 KG</div>
+                                        <div id="summaryTotalDagingDidistribusikan" class="font-extrabold text-lg text-slate-800">0</div>
                                     </div>
                                 </div>
                                 <div>
                                     <div id="summaryBalanceBox" class="border rounded-xl p-3 bg-white text-center">
                                         <div class="text-[11px] text-slate-400 uppercase tracking-wider mb-1.5">Balance Daging</div>
-                                        <div id="summaryBalanceDaging" class="font-extrabold text-lg text-slate-800">0 KG</div>
+                                        <div id="summaryBalanceDaging" class="font-extrabold text-lg text-slate-800">0</div>
                                     </div>
                                 </div>
                             </div>
@@ -608,8 +608,9 @@
                                 </select>
                                 <div class="mb-3 p-3 bg-light rounded border">
                                     <div class="small text-muted mb-2">Total Berat Hewan (akan dibagi otomatis):</div>
-                                    <div class="fw-bold fs-5" id="beratTotalHewan">0 KG</div>
+                                    <div class="fw-bold fs-5" id="beratTotalHewan">0</div>
                                 </div>
+                                <div class="small text-muted mb-2">Catatan: Untuk <strong>Kambing</strong>, Anda dapat memilih opsi "Semua Kambing" pada daftar hewan untuk menghitung distribusi sekaligus (jumlah kambing × berat per pemilik).</div>
                                 <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Berat per Pemilik (KG)</label>
                                 <input type="number" id="beratPerPemilikSahibul" name="beratPerPemilikSahibul" class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/40 px-3 text-sm focus:ring-1 focus:ring-emerald-500 outline-none mb-3" min="0.1" step="0.1" placeholder="Masukkan berat yang diberikan ke setiap pemilik" disabled>
                                 <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Daftar Pemilik Otomatis</label>
@@ -747,7 +748,7 @@
                                     <input type="number" id="beratKotor" name="beratKotor" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" min="1" placeholder="0" required oninput="hitungEstimasiDaging()">
                                 </div>
                                 <div class="col-6">
-                                    <label class="form-label small fw-bold mb-1">Netto (Berat Daging)</label>
+                                    <label class="form-label small fw-bold mb-1">Netto (Berat Daging KG)</label>
                                     <input type="text" id="beratDaging" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition bg-light fw-bold text-success" readonly placeholder="Otomatis">
                                 </div>
                             </div>
