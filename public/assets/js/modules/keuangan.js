@@ -55,8 +55,10 @@ async function loadPerhitungan() {
         const totalDagingSapi = (parseFloat(s.total_kotor) || 0) * 0.8;
         const totalDagingKambing = (parseFloat(k.total_kotor) || 0) * 0.66;
         const totalDagingMasuk = totalDagingSapi + totalDagingKambing;
+        // Sum using the same rounding displayed in the distribusi table so
+        // the summary matches the visible per-row values.
         const totalDagingDidistribusikan = Array.isArray(distribusiRows)
-            ? distribusiRows.reduce((sum, r) => sum + (parseFloat(r.totalBerat || r.total_berat || 0) || 0), 0)
+            ? distribusiRows.reduce((sum, r) => sum + Math.round(parseFloat(r.totalBerat || r.total_berat || 0) || 0), 0)
             : 0;
         const balanceDaging = totalDagingMasuk - totalDagingDidistribusikan;
 
@@ -66,17 +68,17 @@ async function loadPerhitungan() {
 
         document.getElementById('tabelRingkasan').innerHTML = html;
         document.getElementById('totalEkorRingkasan').innerText = ((parseInt(s.total_ekor) || 0) + (parseInt(k.total_ekor) || 0)).toString();
-        document.getElementById('totalKotorRingkasan').innerText = ((parseFloat(s.total_kotor) || 0) + (parseFloat(k.total_kotor) || 0)).toFixed(2);
-        document.getElementById('totalDagingRingkasan').innerText = totalDagingMasuk.toFixed(2);
+        document.getElementById('totalKotorRingkasan').innerText = formatWeight((parseFloat(s.total_kotor || 0) || 0) + (parseFloat(k.total_kotor || 0) || 0));
+        document.getElementById('totalDagingRingkasan').innerText = formatWeight(totalDagingMasuk);
 
         const totalDagingMasukEl = document.getElementById('summaryTotalDagingMasuk');
         const totalDagingDidistribusikanEl = document.getElementById('summaryTotalDagingDidistribusikan');
         const balanceDagingEl = document.getElementById('summaryBalanceDaging');
         const balanceBox = document.getElementById('summaryBalanceBox');
-        if (totalDagingMasukEl) totalDagingMasukEl.innerText = `${totalDagingMasuk.toFixed(2)} KG`;
-        if (totalDagingDidistribusikanEl) totalDagingDidistribusikanEl.innerText = `${totalDagingDidistribusikan.toFixed(2)} KG`;
+        if (totalDagingMasukEl) totalDagingMasukEl.innerText = formatWeight(totalDagingMasuk);
+        if (totalDagingDidistribusikanEl) totalDagingDidistribusikanEl.innerText = formatWeight(totalDagingDidistribusikan);
         if (balanceDagingEl) {
-            balanceDagingEl.innerText = `${balanceDaging.toFixed(2)} KG`;
+            balanceDagingEl.innerText = formatWeight(balanceDaging);
             // Reset classes
             if (balanceBox) {
                 balanceBox.className = 'border rounded-xl p-3 bg-white text-center';
