@@ -269,17 +269,28 @@ function renderShahibulOwnerList() {
         return acc;
     }, {});
     const ownerNames = Object.keys(totalsByOwner);
+    if (ownerNames.length === 0) {
+        list.innerHTML = '<span class="text-muted">Belum ada pemilik untuk tahun dan sumber daging ini.</span>';
+        list.classList.remove('scrollable-owner-list');
+        return;
+    }
 
-    list.innerHTML = ownerNames.length
-        ? ownerNames.map((name) => {
-            const detail = totalsByOwner[name];
-            const jenis = Array.from(detail.jenis).join(', ');
-            return `<div class="flex justify-between gap-2 border-b border-slate-100 py-2 text-sm">
-                <span>${name}</span>
-                <span class="font-semibold text-slate-900">${formatWeight(detail.total)} <span class="text-slate-400">(${jenis})</span></span>
-            </div>`;
-        }).join('')
-        : '<span class="text-muted">Belum ada pemilik untuk tahun dan sumber daging ini.</span>';
+    // Build list HTML
+    list.innerHTML = ownerNames.map((name) => {
+        const detail = totalsByOwner[name];
+        const jenis = Array.from(detail.jenis).join(', ');
+        return `<div class="flex justify-between gap-2 border-b border-slate-100 py-2 text-sm">
+            <span>${name}</span>
+            <span class="font-semibold text-slate-900">${formatWeight(detail.total)} <span class="text-slate-400">(${jenis})</span></span>
+        </div>`;
+    }).join('');
+
+    // If more than 10 owners, make the list scrollable for better UX
+    if (ownerNames.length > 10) {
+        list.classList.add('scrollable-owner-list');
+    } else {
+        list.classList.remove('scrollable-owner-list');
+    }
 }
 
 function createPdfHelpers(doc, pageWidth, pageHeight) {
