@@ -55,10 +55,10 @@ async function loadPerhitungan() {
         const totalDagingSapi = (parseFloat(s.total_kotor) || 0) * 0.8;
         const totalDagingKambing = (parseFloat(k.total_kotor) || 0) * 0.66;
         const totalDagingMasuk = totalDagingSapi + totalDagingKambing;
-        // Sum using the same rounding displayed in the distribusi table so
-        // the summary matches the visible per-row values.
+        // Sum using raw per-row totals (do not round). Display formatting
+        // will show integers without decimals or two decimals when needed.
         const totalDagingDidistribusikan = Array.isArray(distribusiRows)
-            ? distribusiRows.reduce((sum, r) => sum + Math.round(parseFloat(r.totalBerat || r.total_berat || 0) || 0), 0)
+            ? distribusiRows.reduce((sum, r) => sum + (parseFloat(r.totalBerat || r.total_berat || 0) || 0), 0)
             : 0;
         const balanceDaging = totalDagingMasuk - totalDagingDidistribusikan;
 

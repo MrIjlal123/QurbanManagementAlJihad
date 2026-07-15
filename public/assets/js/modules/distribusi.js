@@ -921,7 +921,7 @@ function renderDistribusiResults(rows) {
                 <td>${jumlahSohibul > 1 ? jumlahSohibul : '-'}</td>
                 <td>${beratPerBungkus.toFixed(2)}</td>
                 <td>${row.jumlahBungkus || row.jumlah_bungkus || 0}</td>
-                <td>${Math.round(rowTotalBerat)}</td>
+                <td>${formatWeight(rowTotalBerat)}</td>
                 <td class="no-print"><button type="button" class="rounded-xl bg-rose-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-rose-700" onclick="deleteDistribusiRow('${safeId}')">Hapus</button></td>
             </tr>
         `;
@@ -932,7 +932,7 @@ function renderDistribusiResults(rows) {
     }
 
     totalBungkusEl.innerText = totalBungkus;
-    totalBeratEl.innerText = Math.round(totalBerat);
+    totalBeratEl.innerText = formatWeight(totalBerat);
 
     renderPaginationControls('paginationDistribusi', currentPageDistribusi, totalPages, 'goToDistribusiPage');
 }
@@ -1021,12 +1021,12 @@ async function printDistribusiReport() {
         r.rt ? formatRtLabel(r.rt) : '-',
         r.beratPerBungkus.toFixed(2),
         r.jumlahBungkus,
-        Math.round(Number(r.totalBerat || r.total_berat || 0))
+        formatWeight(Number(r.totalBerat || r.total_berat || 0))
     ]) : [[{ content: 'Tidak ada data distribusi untuk filter ini.', colSpan: 9, styles: { halign: 'center' } }]];
 
     if (normalizedRows.length > 0) {
         const totalBungkus = normalizedRows.reduce((sum, r) => sum + (Number(r.jumlahBungkus) || 0), 0);
-        const totalBerat = normalizedRows.reduce((sum, r) => sum + Math.round(Number(r.totalBerat || r.total_berat || 0) || 0), 0);
+        const totalBerat = normalizedRows.reduce((sum, r) => sum + (Number(r.totalBerat || r.total_berat || 0) || 0), 0);
         tableData.push([
             'TOTAL',
             '',
@@ -1036,7 +1036,7 @@ async function printDistribusiReport() {
             '',
             '',
             totalBungkus,
-            totalBerat
+            formatWeight(totalBerat)
         ]);
     }
 
