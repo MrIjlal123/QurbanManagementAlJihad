@@ -369,8 +369,8 @@ function tampilkanData() {
         const nomorUrut = startIndex + idx + 1;
         const statusValue = (p.status || 'Belum Diambil').toString();
         const statusBadge = statusValue === 'Sudah Diambil'
-            ? `<span class="rounded-full px-3 py-1 text-xs font-medium text-emerald-700 bg-emerald-50">Sudah Diambil</span>`
-            : `<span class="rounded-full px-3 py-1 text-xs font-medium text-amber-700 bg-amber-50">Belum Diambil</span>`;
+            ? `<span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-600">Sudah Diambil</span>`
+            : `<span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-600">Belum Diambil</span>`;
         const actionButtonMarkup = statusValue === 'Belum Diambil'
             ? `<button class="btn-ambil-daging h-7 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs transition-all whitespace-nowrap" onclick="toggleStatus(${p.id})" data-id="${p.id}">Ambil</button>`
             : `<button class="btn-ubah-distribusi h-7 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold rounded-lg text-xs transition-all whitespace-nowrap" onclick="toggleStatus(${p.id})" data-id="${p.id}">Ubah</button>`;

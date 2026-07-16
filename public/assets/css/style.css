@@ -67,6 +67,23 @@ section,
     color: var(--primary);
 }
 
+.btn-download-template-outline {
+    border: 2px solid #047857;
+    background: #ffffff;
+    color: #065f46;
+    font-weight: 700;
+    box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.18);
+}
+
+.btn-download-template-outline:hover,
+.btn-download-template-outline:focus {
+    background: #ffffff;
+    border-color: #065f46;
+    color: #064e3b;
+    box-shadow: 0 0 0 5px rgba(4, 120, 87, 0.24);
+    outline: none;
+}
+
 /* Form controls */
 .form-standard,
 .form-standard .form-control,

@@ -93,8 +93,10 @@ function formatWeight(kg) {
     
     const num = parseFloat(kg);
     if (isNaN(num)) return '-';
-    
-    return `${num.toFixed(2)} KG`;
+    // Round to 2 decimals but hide trailing .00 for integers
+    const rounded = Number(num.toFixed(2));
+    const formatted = Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(2);
+    return formatted;
 }
 
 /**

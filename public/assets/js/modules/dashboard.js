@@ -43,16 +43,36 @@ async function loadDashboardMetrics(year) {
 function renderDashboardSummary() {
     const hewan = dashboardMetrics?.hewan || {};
     const penerima = dashboardMetrics?.penerima || {};
+    const selectedYear = getSelectedDashboardYear();
+    const penerimaRows = (Array.isArray(dataPenerima) ? dataPenerima : []).filter((item) => (
+        selectedYear === 'SemuaTahun' || String(item?.tahun || '').trim() === String(selectedYear).trim()
+    ));
+    const countPenerimaKategori = (kategori) => penerimaRows.filter((item) => (
+        String(item?.kategori || '').trim().toLowerCase() === kategori.toLowerCase()
+    )).length;
+    const jumlahShahibulMenerima = (Array.isArray(distribusiRows) ? distribusiRows : [])
+        .filter((item) => (
+            selectedYear === 'SemuaTahun' || String(item?.tahun || '').trim() === String(selectedYear).trim()
+        ))
+        .filter((item) => /^(sahibul|shahibul) qurban$/i.test(String(item?.kategori || '').trim()))
+        .reduce((total, item) => total + (Number(item?.jumlah_sohibul ?? item?.jumlahSohibul ?? 0) || 0), 0);
 
-    const statTotalHewan = document.getElementById('statTotalHewan');
     const statTotalPenerima = document.getElementById('statTotalPenerima');
     const statSudahDiambil = document.getElementById('statSudahDiambil');
     const statBelumDiambil = document.getElementById('statBelumDiambil');
+    const statPanitiaMenerima = document.getElementById('statPanitiaMenerima');
+    const statWargaMenerima = document.getElementById('statWargaMenerima');
+    const statShahibulMenerima = document.getElementById('statShahibulMenerima');
 
-    if (statTotalHewan) statTotalHewan.innerText = Number.isFinite(hewan.total) ? hewan.total : (Array.isArray(dataHewan) ? dataHewan.length : 0);
-    if (statTotalPenerima) statTotalPenerima.innerText = Number.isFinite(penerima.total) ? penerima.total : (Array.isArray(dataPenerima) ? dataPenerima.length : 0);
-    if (statSudahDiambil) statSudahDiambil.innerText = Number.isFinite(penerima.sudah_diambil) ? penerima.sudah_diambil : (Array.isArray(dataPenerima) ? dataPenerima.filter(p => p.status === 'Sudah Diambil').length : 0);
-    if (statBelumDiambil) statBelumDiambil.innerText = Number.isFinite(penerima.belum_diambil) ? penerima.belum_diambil : (Array.isArray(dataPenerima) ? dataPenerima.filter(p => p.status !== 'Sudah Diambil').length : 0);
+    if (statTotalPenerima) statTotalPenerima.innerText = Number.isFinite(penerima.total) ? penerima.total : penerimaRows.length;
+    if (statSudahDiambil) statSudahDiambil.innerText = Number.isFinite(penerima.sudah_diambil) ? penerima.sudah_diambil : penerimaRows.filter((item) => item.status === 'Sudah Diambil').length;
+    if (statBelumDiambil) statBelumDiambil.innerText = Number.isFinite(penerima.belum_diambil) ? penerima.belum_diambil : penerimaRows.filter((item) => item.status !== 'Sudah Diambil').length;
+    if (statPanitiaMenerima) statPanitiaMenerima.innerText = countPenerimaKategori('Panitia');
+    // Warga mencakup seluruh penerima dari RT maupun kategori lain, kecuali panitia.
+    if (statWargaMenerima) statWargaMenerima.innerText = penerimaRows.filter((item) => (
+        String(item?.kategori || '').trim().toLowerCase() !== 'panitia'
+    )).length;
+    if (statShahibulMenerima) statShahibulMenerima.innerText = jumlahShahibulMenerima;
 
     const dashTotalSapi = document.getElementById('dashTotalSapi');
     const dashTotalKambing = document.getElementById('dashTotalKambing');
@@ -66,7 +86,12 @@ function renderDashboardSummary() {
     if (dashTotalSapi) dashTotalSapi.innerText = Number.isFinite(sapiCount) ? sapiCount : (Array.isArray(dataHewan) ? dataHewan.filter(h => (h.jenis || '').toString().toLowerCase() === 'sapi').length : 0);
     if (dashTotalKambing) dashTotalKambing.innerText = Number.isFinite(kambingCount) ? kambingCount : (Array.isArray(dataHewan) ? dataHewan.filter(h => (h.jenis || '').toString().toLowerCase() === 'kambing').length : 0);
     if (dashTotalHewan) dashTotalHewan.innerText = Number.isFinite(hewan.total) ? hewan.total : (Array.isArray(dataHewan) ? dataHewan.length : 0);
-    if (dashBeratBersih) dashBeratBersih.innerText = Number.isFinite(totalDaging) ? formatWeight(totalDaging) : formatWeight((Array.isArray(dataHewan) ? dataHewan.reduce((sum, h) => sum + (parseFloat(h.daging ?? h.berat_daging ?? 0) || 0), 0) : 0));
+    if (dashBeratBersih) {
+        const beratBersih = Number.isFinite(totalDaging)
+            ? formatWeight(totalDaging)
+            : formatWeight(Array.isArray(dataHewan) ? dataHewan.reduce((sum, h) => sum + (parseFloat(h.daging ?? h.berat_daging ?? 0) || 0), 0) : 0);
+        dashBeratBersih.innerHTML = `${beratBersih} KG`;
+    }
 }
 
 /**
@@ -74,31 +99,6 @@ function renderDashboardSummary() {
  * Syncs statistics and renders updated dashboard
  */
 function updateDashboard() {
-    const daftarHewan = Array.isArray(dataHewan) ? dataHewan : [];
-    const daftarPenerima = Array.isArray(dataPenerima) ? dataPenerima : [];
-
-    const elTotalHewan = document.getElementById('statTotalHewan');
-    if (elTotalHewan) elTotalHewan.innerText = daftarHewan.length;
-
-    const totalPenerima = daftarPenerima.length;
-    const sudah = daftarPenerima.filter(p => p.status === 'Sudah Diambil').length;
-    const belum = totalPenerima - sudah;
-
-    const totalSapi = daftarHewan.filter(h => (h.jenis || '').toString().toLowerCase() === 'sapi').length;
-    const totalKambing = daftarHewan.filter(h => (h.jenis || '').toString().toLowerCase() === 'kambing').length;
-
-    const elTotalPenerima = document.getElementById('statTotalPenerima');
-    const elSudah = document.getElementById('statSudahDiambil');
-    const elBelum = document.getElementById('statBelumDiambil');
-    const elJumlahSapi = document.getElementById('statJumlahSapi');
-    const elJumlahKambing = document.getElementById('statJumlahKambing');
-
-    if (elTotalPenerima) elTotalPenerima.innerText = totalPenerima;
-    if (elSudah) elSudah.innerText = sudah;
-    if (elBelum) elBelum.innerText = belum;
-    if (elJumlahSapi) elJumlahSapi.innerText = totalSapi;
-    if (elJumlahKambing) elJumlahKambing.innerText = totalKambing;
-
     renderDashboard();
 }
 
@@ -275,22 +275,6 @@ function ensureDashboardLayout() {
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Total Hewan</span>
-                            <h3 id="statTotalHewan" class="text-2xl font-bold text-slate-800 mt-0.5">0</h3>
-                        </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-3 hover:shadow-md transition-all">
-                        <div class="flex items-center justify-between">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                    <circle cx="9" cy="7" r="4" />
-                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="flex flex-col">
                             <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Total Penerima</span>
                             <h3 id="statTotalPenerima" class="text-2xl font-bold text-slate-800 mt-0.5">0</h3>
                         </div>
@@ -334,8 +318,8 @@ function ensureDashboardLayout() {
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Jumlah Sapi</span>
-                            <h3 id="statJumlahSapi" class="text-2xl font-bold text-slate-800 mt-0.5">0</h3>
+                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Warga Menerima</span>
+                            <h3 id="statWargaMenerima" class="text-2xl font-bold text-slate-800 mt-0.5">0</h3>
                         </div>
                     </div>
                     <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-3 hover:shadow-md transition-all">
@@ -349,8 +333,24 @@ function ensureDashboardLayout() {
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Jumlah Kambing</span>
-                            <h3 id="statJumlahKambing" class="text-2xl font-bold text-slate-800 mt-0.5">0</h3>
+                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Shahibul Menerima</span>
+                            <h3 id="statShahibulMenerima" class="text-2xl font-bold text-slate-800 mt-0.5">0</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-3 hover:shadow-md transition-all">
+                        <div class="flex items-center justify-between">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Panitia Menerima</span>
+                            <h3 id="statPanitiaMenerima" class="text-2xl font-bold text-slate-800 mt-0.5">0</h3>
                         </div>
                     </div>
             `;
@@ -382,10 +382,10 @@ function ensureDashboardLayout() {
             const printBtn = document.getElementById('printLaporanTahunanBtn');
             let printHtml;
             if (printBtn) {
-                printBtn.className = 'h-10 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 text-sm font-semibold transition whitespace-nowrap flex items-center justify-center';
+                printBtn.className = 'h-10 rounded-xl bg-emerald-600 px-3 pr-4 text-sm font-semibold text-white shadow-sm shadow-emerald-600/25 transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md hover:shadow-emerald-600/20 whitespace-nowrap flex items-center justify-center gap-2';
                 printHtml = printBtn.outerHTML;
             } else {
-                printHtml = '<button id="printLaporanTahunanBtn" class="h-10 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 text-sm font-semibold transition whitespace-nowrap flex items-center justify-center" onclick="window.cetakLaporanPDF_Lengkap()">Cetak Laporan Tahunan</button>';
+                printHtml = '<button id="printLaporanTahunanBtn" class="h-10 rounded-xl bg-emerald-600 px-3 pr-4 text-sm font-semibold text-white shadow-sm shadow-emerald-600/25 transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md hover:shadow-emerald-600/20 whitespace-nowrap flex items-center justify-center gap-2" onclick="window.cetakLaporanPDF_Lengkap()"><span class="grid h-7 w-7 place-items-center rounded-lg bg-white/15"><i data-lucide="printer" class="h-4 w-4"></i></span> Cetak Laporan Tahunan</button>';
             }
 
             pageBar.innerHTML = `
@@ -434,8 +434,8 @@ function ensureDashboardLayout() {
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Total Berat Bersih</span>
-                            <h3 id="dashBeratBersih" class="text-2xl font-bold text-slate-800 mt-0.5">0</h3>
+                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Total Sapi</span>
+                            <h3 id="dashTotalSapi" class="text-2xl font-bold text-slate-800 mt-0.5">0</h3>
                         </div>
                     </div>
                     <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-3 hover:shadow-md transition-all">
@@ -451,8 +451,8 @@ function ensureDashboardLayout() {
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Total Sapi</span>
-                            <h3 id="dashTotalSapi" class="text-2xl font-bold text-slate-800 mt-0.5">0</h3>
+                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Total Kambing</span>
+                            <h3 id="dashTotalKambing" class="text-2xl font-bold text-slate-800 mt-0.5">0</h3>
                         </div>
                     </div>
                     <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-3 hover:shadow-md transition-all">
@@ -466,8 +466,8 @@ function ensureDashboardLayout() {
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Total Kambing</span>
-                            <h3 id="dashTotalKambing" class="text-2xl font-bold text-slate-800 mt-0.5">0</h3>
+                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Total Berat Bersih Daging</span>
+                            <h3 id="dashBeratBersih" class="text-2xl font-bold text-slate-800 mt-0.5">0 KG</h3>
                         </div>
                     </div>
             `;
@@ -527,7 +527,7 @@ function renderDashboard() {
     if (dashTotalHewan) dashTotalHewan.innerText = totalHewan;
     if (dashTotalSapi) dashTotalSapi.innerText = totalSapi;
     if (dashTotalKambing) dashTotalKambing.innerText = totalKambing;
-    if (dashBeratBersih) dashBeratBersih.innerText = formatWeight(totalBeratBersih);
+    if (dashBeratBersih) dashBeratBersih.innerHTML = `${formatWeight(totalBeratBersih)} KG`;
 
     const chartElement = document.getElementById('dashboardRtChart');
     if (!chartElement) return;

@@ -309,11 +309,8 @@
                 <h2 id="appPageTitle" class="mt-2 text-2xl font-bold text-slate-950">Dashboard Ringkas Qurban</h2>
             </div>
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <label class="relative block">
-                    <i data-lucide="search" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"></i>
-                </label>
-                <div class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-white px-4 py-2 shadow-sm">
-                    <div class="grid h-9 w-9 place-items-center rounded-full bg-emerald-600 text-sm font-bold text-white">AJ</div>
+                <div class="flex items-center gap-3 rounded-full border border-emerald-100/80 bg-white/90 py-2 pl-2.5 pr-4 shadow-sm shadow-emerald-950/5 backdrop-blur-sm">
+                    <div class="grid h-9 w-9 place-items-center rounded-full bg-emerald-500 text-white shadow-sm shadow-emerald-600/30"><i data-lucide="user-round" class="h-4 w-4"></i></div>
                     <div class="leading-tight">
                         <p class="text-sm font-semibold text-slate-900">Admin Qurban</p>
                         <p class="text-xs text-slate-400">Masjid Al Jihad</p>
@@ -326,17 +323,6 @@
                 <div class="flex items-center gap-3">
                     <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
                         <i data-lucide="package" class="text-xl"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Hewan</div>
-                        <div id="statTotalHewan" class="text-2xl font-bold text-slate-800">0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md flex flex-col justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="bg-blue-50 text-blue-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
-                        <i data-lucide="users" class="text-xl"></i>
                     </div>
                     <div>
                         <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Penerima</div>
@@ -372,8 +358,8 @@
                         <i data-lucide="server" class="text-xl"></i>
                     </div>
                     <div>
-                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Jumlah Sapi</div>
-                        <div id="statJumlahSapi" class="text-2xl font-bold text-slate-800">0</div>
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Warga Menerima</div>
+                        <div id="statWargaMenerima" class="text-2xl font-bold text-slate-800">0</div>
                     </div>
                 </div>
             </div>
@@ -383,8 +369,19 @@
                         <i data-lucide="users" class="text-xl"></i>
                     </div>
                     <div>
-                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Jumlah Kambing</div>
-                        <div id="statJumlahKambing" class="text-2xl font-bold text-slate-800">0</div>
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Shahibul Menerima</div>
+                        <div id="statShahibulMenerima" class="text-2xl font-bold text-slate-800">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md flex flex-col justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-50 text-blue-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
+                        <i data-lucide="users" class="text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Panitia Menerima</div>
+                        <div id="statPanitiaMenerima" class="text-2xl font-bold text-slate-800">0</div>
                     </div>
                 </div>
             </div>
@@ -412,7 +409,7 @@
                                                 <option value="SemuaTahun">Semua Tahun</option>
                                             </select>
                                             <button class="h-10 bg-slate-800 hover:bg-slate-900 text-white rounded-xl px-4 text-sm font-semibold transition flex items-center gap-2" onclick="refreshDashboard()"><i data-lucide="refresh-cw" class="text-base"></i> Segarkan</button>
-                                            <button class="h-10 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl px-4 text-sm font-semibold transition flex items-center gap-2" id="printLaporanTahunanBtn" onclick="window.cetakLaporanPDF_Lengkap()"><i data-lucide="printer" class="text-base"></i> Cetak Laporan Tahunan</button>
+                                            <button class="h-10 rounded-xl bg-emerald-600 px-3 pr-4 text-sm font-semibold text-white shadow-sm shadow-emerald-600/25 transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md hover:shadow-emerald-600/20 flex items-center gap-2" id="printLaporanTahunanBtn" onclick="window.cetakLaporanPDF_Lengkap()"><span class="grid h-7 w-7 place-items-center rounded-lg bg-white/15"><i data-lucide="printer" class="h-4 w-4"></i></span> Cetak Laporan Tahunan</button>
                                         </div>
                                     </div>
                                 </div>
@@ -435,18 +432,6 @@
                                                 <i data-lucide="scale" class="text-xl"></i>
                                             </div>
                                             <div class="flex-1">
-                                                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Berat Bersih</div>
-                                                <div id="dashBeratBersih" class="text-xl font-bold text-slate-800 my-1">0</div>
-                                                <div class="text-xs text-slate-400 font-medium">Estimasi berat daging bersih</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
-                                        <div class="flex items-start gap-3">
-                                            <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
-                                                <i data-lucide="user" class="text-xl"></i>
-                                            </div>
-                                            <div class="flex-1">
                                                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Sapi</div>
                                                 <div id="dashTotalSapi" class="text-xl font-bold text-slate-800 my-1">0</div>
                                                 <div class="text-xs text-slate-400 font-medium">Jumlah ekor sapi</div>
@@ -456,12 +441,24 @@
                                     <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
                                         <div class="flex items-start gap-3">
                                             <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
-                                                <i data-lucide="users" class="text-xl"></i>
+                                                <i data-lucide="user" class="text-xl"></i>
                                             </div>
                                             <div class="flex-1">
                                                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Kambing</div>
                                                 <div id="dashTotalKambing" class="text-xl font-bold text-slate-800 my-1">0</div>
                                                 <div class="text-xs text-slate-400 font-medium">Jumlah ekor kambing</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                                        <div class="flex items-start gap-3">
+                                            <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl flex items-center justify-center w-10 h-10">
+                                                <i data-lucide="users" class="text-xl"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Berat Bersih Daging</div>
+                                                <div id="dashBeratBersih" class="text-xl font-bold text-slate-800 my-1">0 KG</div>
+                                                <div class="text-xs text-slate-400 font-medium">Estimasi berat daging bersih</div>
                                             </div>
                                         </div>
                                     </div>
@@ -472,8 +469,8 @@
                             <div class="card p-4 card-soft">
                                 <div class="page-title-bar mb-3">
                                     <div>
-                                        <h5 class="fw-bold mb-1">Distribusi per RT</h5>
-                                        <p class="text-muted mb-0">Visualisasi ringkas jumlah bungkus berdasarkan RT.</p>
+                                        <h5 class="fw-bold mb-1">Distribusi per Kategori</h5>
+                                        <p class="text-muted mb-0">Visualisasi ringkas jumlah bungkus berdasarkan kategori.</p>
                                     </div>
                                 </div>
                                 <div id="dashboardChartWrapper">
@@ -861,7 +858,7 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <button class="btn btn-outline-standard btn-standard btn-rounded-large" onclick="downloadTemplateExcel()"><i class="bi bi-download"></i> Download Template Excel (.xlsx)</button>
+                            <button class="btn btn-outline-standard btn-standard btn-rounded-large btn-download-template-outline" onclick="downloadTemplateExcel()"><i class="bi bi-download"></i> Download Template Excel (.xlsx)</button>
                         </div>
                         <div class="mb-3">
                             <input type="file" id="inputExcel" class="form-control form-control-sm w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:ring-1 focus:ring-emerald-500 shadow-sm outline-none transition" accept=".xlsx, .xls">
@@ -1176,7 +1173,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-    <script src="https://unpkg.com/lucide/dist/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@1.24.0/dist/umd/lucide.min.js"></script>
 
     <!-- ===== Utility Scripts ===== -->
     <script src="assets/js/utils/cache.js"></script>

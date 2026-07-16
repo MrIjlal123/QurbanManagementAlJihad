@@ -192,7 +192,23 @@ function formatBeratDaging(value) {
 
     const roundedValue = Number(numericValue.toFixed(2));
     const formattedValue = Number.isInteger(roundedValue) ? roundedValue.toString() : roundedValue.toFixed(2);
-    return `${formattedValue} KG`;
+    return formattedValue;
+}
+
+/**
+ * Format berat kotor: no decimals when whole number, two decimals when fractional.
+ * Example: 18 -> "18 KG", 18.5 -> "18.50 KG"
+ * @param {number|string} value
+ * @returns {string}
+ */
+function formatBeratKotor(value) {
+    const numericValue = parseFloat(value);
+    if (Number.isNaN(numericValue)) return '';
+
+    if (numericValue === 0) return '';
+
+    const rounded = Math.round(numericValue * 100) / 100;
+    return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(2);
 }
 
 /**
@@ -211,7 +227,7 @@ function hitungEstimasiDaging() {
     
     const beratDagingEl = document.getElementById('beratDaging');
     if (beratDagingEl) {
-        beratDagingEl.value = daging === 0 ? '' : formatBeratDaging(daging).replace(' KG', '');
+        beratDagingEl.value = daging === 0 ? '' : formatBeratDaging(daging);
     }
 }
 
@@ -257,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const beratDagingEl = document.getElementById('beratDaging');
             if (beratDagingEl) {
-                beratDagingEl.value = dagingValue === 0 ? '' : formatBeratDaging(dagingValue).replace(' KG', '');
+                beratDagingEl.value = dagingValue === 0 ? '' : formatBeratDaging(dagingValue);
             }
 
             let pemilikValue = '';
@@ -362,10 +378,10 @@ function tampilkanDataHewan() {
             const rtValue = h.rt && h.rt !== '-' ? formatRtLabel(h.rt) : '-';
             const beratKotor = parseFloat(h.kotor || 0) || 0;
             const beratNetto = h.daging && parseFloat(h.daging) > 0 ? parseFloat(h.daging) : calculateBeratBersih(beratKotor, h.jenis);
-            const row = `<tr class="transition hover:bg-slate-50"><td class="font-bold text-slate-900">${STANDARD_YEAR}</td><td>${rtValue}</td><td><span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">${h.jenis || '-'}</span></td><td class="font-medium text-slate-900">${formatOwnersForExport(h.pemilik)}</td><td>${h.permintaan || '-'}</td><td>${beratKotor.toFixed(2)} KG</td><td>${formatBeratDaging(beratNetto)}</td><td>${h.keterangan || '-'}</td>`;
+            const row = `<tr class="transition hover:bg-slate-50"><td class="font-bold text-slate-900">${STANDARD_YEAR}</td><td>${rtValue}</td><td><span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">${h.jenis || '-'}</span></td><td class="font-medium text-slate-900">${formatOwnersForExport(h.pemilik)}</td><td>${h.permintaan || '-'}</td><td>${formatBeratKotor(beratKotor)}</td><td>${formatBeratDaging(beratNetto)}</td><td>${h.keterangan || '-'}</td>`;
             if (tabelLayar) tabelLayar.innerHTML += row + `<td class="no-print"><div class="flex justify-center gap-2"><button class="rounded-lg px-2 py-1 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-50" onclick="editHewan(${h.id})">Ubah</button><button class="rounded-lg px-2 py-1 text-xs font-semibold text-rose-600 transition hover:bg-rose-50" onclick="hapusHewan(${h.id})">Hapus</button></div></td></tr>`;
             if (tabelPdfBody) tabelPdfBody.innerHTML += row + `</tr>`;
-            if (tabelPdfSajaBody) tabelPdfSajaBody.innerHTML += `<tr><td>${startIndex + index + 1}</td><td>${STANDARD_YEAR}</td><td>${rtValue}</td><td>${h.jenis || '-'}</td><td>${formatOwnersForExport(h.pemilik)}</td><td>${h.permintaan || '-'}</td><td>${beratKotor.toFixed(2)} KG</td><td>${formatBeratDaging(beratNetto)}</td><td>${h.keterangan || '-'}</td></tr>`;
+            if (tabelPdfSajaBody) tabelPdfSajaBody.innerHTML += `<tr><td>${startIndex + index + 1}</td><td>${STANDARD_YEAR}</td><td>${rtValue}</td><td>${h.jenis || '-'}</td><td>${formatOwnersForExport(h.pemilik)}</td><td>${h.permintaan || '-'}</td><td>${formatBeratKotor(beratKotor)}</td><td>${formatBeratDaging(beratNetto)}</td><td>${h.keterangan || '-'}</td></tr>`;
         });
     }
 
@@ -542,15 +558,15 @@ function cetakPDFHewanSaja() {
         startY: 36,
         theme: 'grid',
         head: [['No', 'Tahun', 'RT', 'Jenis Hewan', 'Nama Pemilik', 'Permintaan Khusus', 'Berat Kotor (KG)', 'Berat Daging (KG)', 'Keterangan']],
-        body: hewanToPrint.map((h, idx) => [
+            body: hewanToPrint.map((h, idx) => [
             idx + 1,
             STANDARD_YEAR,
             h.rt ? formatRtLabel(h.rt) : '-',
             h.jenis || '-',
             formatOwnersForExport(h.pemilik),
             h.permintaan || '-',
-            `${h.kotor || 0} KG`,
-            formatBeratDaging(h.daging || 0),
+                formatBeratKotor(h.kotor || 0),
+                formatBeratDaging(h.daging || 0),
             h.keterangan || '-'
         ]),
         showHead: 'everyPage',
